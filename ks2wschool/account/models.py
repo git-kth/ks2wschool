@@ -1,6 +1,8 @@
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 from django.db import models
 from django.utils import timezone
+from django.shortcuts import get_object_or_404
+from django.conf import settings
 
 import os, uuid
 
@@ -75,3 +77,7 @@ class User(AbstractBaseUser):
     @property
     def is_staff(self):
         return self.is_admin
+
+    def delete(self):
+        os.remove(os.path.join(settings.BASE_DIR / self.profile_image.url[1:]))
+        super(User, self).delete()

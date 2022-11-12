@@ -1,4 +1,8 @@
 {% extends 'base.html' %}
+{% block title %}
+    <title>{{ request.user.nickname }} 프로필 수정</title>
+{% endblock %}
+
 {% block content %}
     <h1>{{ request.user.nickname }}님의 프로필 수정</h1>
     {{ form.non_field_errors }}
@@ -7,25 +11,42 @@
         {% for field in form %}
             {{ field.errors }}
             <label for="{{ field.id_for_label }}">{{ field.label }}:</label>
-            {{ field }}
             {% if field.name == 'profile_image' %}
+                {% if field.value %}
+                <p>기존 프로필</p>
+                <div><img width="128" height="128" src="/media/{{ field.value }}" alt="기존 프로필"></div>
+                {% endif %}
+                
                 <div id="image_container"></div>
             {% endif %}
+            {{ field }}
             <br><br><br>
         {% endfor %}
         <input type="submit" value="적용">
     </form>
+    <a class="delete" href="javascript:void(0)" data-uri="{% url 'profile_delete' request.user.nickname %}">계정  삭제하기</a>
     <script>
         document.getElementById('id_profile_image').addEventListener('change', function(event){
             var reader = new FileReader();
 
             reader.onload = function(event) {
                 var img = document.createElement("img");
+                var p = document.createElement("p");
+                img.width = "128";
+                img.height = "128";
                 img.setAttribute("src", event.target.result);
+                p.innerText = '변경할 프로필';
+                document.querySelector("div#image_container").innerHTML = '';
+                document.querySelector("div#image_container").appendChild(p);
                 document.querySelector("div#image_container").appendChild(img);
             };
 
             reader.readAsDataURL(event.target.files[0]);
+        });
+        $(".delete").click(function(){
+            if(confirm('계정을 삭제하시겠습니까?\n되돌릴 수 없는 작업입니다.')){
+                location.href = this.dataset.uri;
+            }
         });
     </script>
 {% endblock %}

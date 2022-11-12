@@ -1,13 +1,12 @@
 {% extends 'base.html' %}
+{% block title %}
+    <title>kswschool 메인 페이지</title>
+{% endblock %}
 {% block content %}
     
-    {% if user.is_authenticated %}
-        {{ user.nickname }}님 환영합니다.<br/>
-        <a href="{% url 'profile' user.nickname %}">{{ user.nickname }}의 프로필</a>
-        <a href="{% url 'logout' %}">Logout</a>
-    {% else %}
-        <a href="{% url 'login' %}?next={{ request.path }}">Login</a>
-    {% endif %}
+    <h1>Title</h1>
+    <p>author</p>
+    <p>content</p>
     <!-- <div id="text">
 
     </div>

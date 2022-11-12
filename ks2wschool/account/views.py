@@ -94,7 +94,6 @@ def activate(request, uidb64, token):
         return render(request, 'blog/index.html', {'error' : '계정 활성화 오류'})
 
 
-@login_required(login_url='login')
 def profile(request, nickname):
     user = get_object_or_404(User, nickname=nickname)
     return render(request, 'account/profile.html', {'user': user})
@@ -108,8 +107,9 @@ def profile_update(request, nickname):
     if request.method == 'POST':
         form = UpdateUserForm(request.POST, instance=user)
         if form.is_valid():
+            user.profile_image.delete()
             user = form.save(commit=False)
-            print(form.cleaned_data['profile_image'])
+            # print(form.cleaned_data['profile_image'])
             for img in request.FILES.getlist('profile_image'):
                 user.profile_image = img
             user.save()
@@ -117,3 +117,13 @@ def profile_update(request, nickname):
     else:
         form = UpdateUserForm(instance=user)
     return render(request, 'account/profile_update.html', {'form': form})
+
+@login_required(login_url='login')
+def profile_delete(request, nickname):
+    user = get_object_or_404(User, nickname=nickname)
+    if request.user != user:
+        messages.error(request, '삭제 권한이 없습니다.')
+        return redirect('profile', nickname=nickname)
+    user.delete()
+    return redirect('index')
+        

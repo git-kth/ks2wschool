@@ -51,7 +51,7 @@ class UpdateUserForm(forms.ModelForm):
         'max': datetime.date.today(),
         'value': datetime.date.today(),
     }))
-    short_info = forms.CharField(label='short_info', widget=forms.Textarea(attrs={
+    short_info = forms.CharField(label='short_info', required=False, widget=forms.Textarea(attrs={
         'resize': None,
     }))
     
