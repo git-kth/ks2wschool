@@ -3,10 +3,31 @@
     <title>kswschool 메인 페이지</title>
 {% endblock %}
 {% block content %}
+    {% if user.is_authenticated %}
+        <a href="{% url 'create_post' %}">글 생성</a>
+        {% for post in post_list %}
+            <h1>
+                <a href="{% url 'detail_post' post.id %}">
+                    {{ post.title }}
+                </a>
+            </h1>
+            <p>{{ post.author }}</p>
+            <p>{{ post.content }}</p>
+            <hr>
+        {% endfor %}
+    {% else %}
+        {% for post in post_list %}
+        <h1>
+            <a href="{% url 'detail_post' post.id %}">
+                {{ post.title }}
+            </a>
+        </h1>
+            <p>{{ post.author }}</p>
+            <p>{{ post.content }}</p>
+        <hr>
+    {% endfor %}
+    {% endif %}
     
-    <h1>Title</h1>
-    <p>author</p>
-    <p>content</p>
     <!-- <div id="text">
 
     </div>
@@ -24,3 +45,4 @@
         }
     </script> -->
 {% endblock %}
+

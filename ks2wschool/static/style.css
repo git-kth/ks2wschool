@@ -11,6 +11,10 @@ body{
     border-radius: 15px;
 }
 
+#header-bar, #side-bar, #main{
+    box-shadow: 8px 10px 8px -2px gray;
+}
+
 #header-bar{
     float: left;
     width: 98%;
