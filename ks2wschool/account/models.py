@@ -56,7 +56,6 @@ class User(AbstractBaseUser):
         ])
 
     profile_image = models.ImageField(upload_to=date_uuid_upload_to, blank=True, null=True)
-
     class Meta:
         db_table = 'user'
     
@@ -79,5 +78,6 @@ class User(AbstractBaseUser):
         return self.is_admin
 
     def delete(self):
-        os.remove(os.path.join(settings.BASE_DIR / self.profile_image.url[1:]))
+        if self.profile_image: 
+            os.remove(os.path.join(settings.BASE_DIR / self.profile_image.url[1:]))
         super(User, self).delete()
