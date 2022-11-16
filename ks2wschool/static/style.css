@@ -1,21 +1,25 @@
-html{
+html {
     min-width: 1024px;
-    font-family: "SF Pro KR","SF Pro Display","SF Pro Icons","Apple Gothic","HY Gulim","MalgunGothic","HY Dotum","Lexi Gulim","Helvetica Neue","Helvetica","Arial",sans-serif;
+    font-family: "SF Pro KR", "SF Pro Display", "SF Pro Icons", "Apple Gothic", "HY Gulim", "MalgunGothic", "HY Dotum", "Lexi Gulim", "Helvetica Neue", "Helvetica", "Arial", sans-serif;
 }
-body{
+
+body {
     margin: 0;
-    background-color:gainsboro;
+    background-color: gainsboro;
 }
 
-#wrap > *{
+#wrap>* {
     border-radius: 15px;
+
 }
 
-#header-bar, #side-bar, #main{
+#header-bar,
+#side-bar,
+#main {
     box-shadow: 8px 10px 8px -2px gray;
 }
 
-#header-bar{
+#header-bar {
     float: left;
     width: 98%;
     height: 30%;
@@ -23,84 +27,92 @@ body{
     background-color: white;
     padding: 18px 25px 18px 10px;
     margin: 0.8% 0 0 1%;
+    display: flex;
+    justify-content: space-between;
 }
 
-.user-box{
+.user-box {
     float: right;
     display: flex;
     margin: 11px 17px 0 0;
 }
-.profile-image{
+
+.profile-image {
     display: flex;
     flex-direction: column;
     justify-content: center;
     margin-right: 15px;
+
 }
 
-.profile-image img{
-    border-radius: 35px;
+.profile-image img {
+    border-radius: 70%;
 }
 
-.profile-info{
+.profile-info {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
 }
 
-.loginout-btn{
+.loginout-btn {
     display: block;
     border: 1px solid black;
     width: 100px;
     text-align: center;
     padding: 5px;
     text-decoration: none;
+
     color: black;
     cursor: pointer;
 }
-.loginout-btn:hover{
-    color:white;
-    background-color: black;
+
+.loginout-btn:hover {
+    color: white;
+    background-color: #99CCFF;
 }
 
 
-.home-logo{
-    margin-left: 15px;  
+.home-logo {
+
+    margin-left: 15px;
 }
 
-#side-bar{
+#side-bar {
     float: left;
-    width:18%;
+    width: 18%;
     margin: 0.9% 0 0 1%;
     background-color: white;
     overflow: hidden;
     text-align: center;
-    
+
 }
 
-#side-bar a{
+#side-bar a {
     display: flex;
     justify-content: center;
     align-items: center;
     padding: 10px 0px;
     text-decoration: none;
+
     color: black;
     overflow: hidden;
     border-top: 1px solid slategray;
 }
 
 
-#side-bar a:hover{
+#side-bar a:hover {
     color: white;
-    background-color: black;
+    background-color: #99CCFF;
 }
 
-#main{
+#main {
     float: left;
     margin: 0.9% 0 0 1%;
     padding: 30px 0px 50px;
     width: 79%;
     background-color: white;
     text-align: center;
-}
 
+}

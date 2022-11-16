@@ -1,0 +1,77 @@
+html {
+    min-width: 1024px;
+    font-family: "SF Pro KR", "SF Pro Display", "SF Pro Icons", "Apple Gothic", "HY Gulim", "MalgunGothic", "HY Dotum", "Lexi Gulim", "Helvetica Neue", "Helvetica", "Arial", sans-serif;
+}
+
+
+.profile_profile_image {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-column: 10px;
+}
+
+.profile_class {
+    margin: 5px;
+}
+
+
+
+.profile_id_update {
+    display: flex;
+    justify-content: space-between;
+}
+
+.profile_introduction {
+    width: 100%;
+    border-color: #99CCFF;
+}
+
+.my_introduction {
+    display: block;
+    text-align: start;
+    color: #99CCFF;
+}
+
+.field_box {
+    border-color: #99CCFF;
+}
+
+.account_update {
+    display: block;
+    border: 1px solid black;
+    width: 100px;
+    text-align: center;
+    padding: 5px;
+    text-decoration: none;
+    color: black;
+    cursor: pointer;
+    margin-right: 17px;
+}
+
+.account_update:hover {
+    color: white;
+    background-color: #99CCFF;
+}
+
+
+.field_box {
+    border-radius: 10px;
+}
+
+.profile_email,
+.profile_birthdate,
+.profile_nickname,
+.profile_account_build {
+    display: flex;
+    justify-content: start;
+}
+
+.profile_basic_image {
+    border-radius: 70%;
+}
+
+hr {
+    background-color: #99CCFF;
+    height: 1px;
+    border: 0;
+}

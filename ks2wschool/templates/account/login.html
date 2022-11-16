@@ -1,27 +1,56 @@
 {% extends 'base.html' %}
-{% block title %}
-    <title>로그인</title>
+{% load static %}
+{% block style %}
+<link rel='stylesheet' href="{% static 'login.css' %}?after=31">
 {% endblock %}
 {% block content %}
-    <h1>Login</h1>
+<div class="login">
+    <div class="login__content">
+        <div class="login__img">
+            <img src="/static/images/loginlogo.png" alt="로그인 로고">
+        </div>
+        <div class="login__forms">
+            <!--login form -->
+            <form method="POST" action="{% url 'login'%}?next={{ request.path }}" class="login__register" id="login-in">
+                {% csrf_token %}
 
-    <form method="POST" action="{% url 'login'%}?next={{ request.path }}">
-        {% csrf_token %}
-        
-        {% if error %}
-            {{ error }}
-            <br>
-        {% endif %}
-        {{ form.errors }}
+                {% if error %}
+                {{ error }}
+                <br>
+                {% endif %}
+                {{ form.errors }}
+                <h1 class="login__title">Sign In</h1>
+                <div class="login__box">
+                    <i class='bx bx-user login__icon'></i>
+                    {{ form.email }}
 
-        {% for field in form %}
-            {{ field.erros }}
-            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
-            {{ field }}
-            <br><br><br>
-        {% endfor %}
-        <br>
-        <input type="submit" value="Login">
+                </div>
+
+                <div class="login__box">
+                    <i class='bx bx-lock login__icon'></i>
+
+                    {{ form.password }}
+                </div>
+
+                <a href="#" class="login__forgot">Forgot ID/Password? </a>
+
+                <button class="sign_button">
+                    <div class="login__button">
+                        <a href="{% url 'login' %}">Sign In</a>
+                    </div>
+                </button>
+                <!-- 수정요망 -->
+                <span class="login__account login__account--account">Don't Have an Account? </span> <br>
+                <a href="{% url 'signup' %}"><span class="login__signin login__signin--signup" id="sign-up"> Sign
+                        Up</span></a>
+
+        </div>
+        <!-- <div> -->
+    </div>
+
     </form>
-    <a href="{% url 'signup' %}">sign up</a>
+
+</div>
+</div>
+</div>
 {% endblock %}

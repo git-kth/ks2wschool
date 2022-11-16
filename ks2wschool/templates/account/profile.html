@@ -1,21 +1,61 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block title %}
-    <title>{{ user }} 프로필</title>
+<link rel="stylesheet" type="text/css" href="{% static 'profile.css' %}?after=6">
+<title>{{ user }} 프로필</title>
 {% endblock %}
 {% block content %}
-    <h1>{{ user }}님의 프로필</h1>
-    {% if request.user == user %}
-        <a href="{% url 'profile_update' user.nickname %}">계정 수정</a>
-    {% endif %}
+<div class="profile_class">
+    <div>
+        <div class="profile_id_update">
+            <div class="profile_profile_image">
+                <div class="img_profile">
+                    <!-- 여기에 src를 수정해줘야함 -->
+                    <!-- 정보수정 페이지에서 이미지를 넣어도 이미 이미지가 고정적으로
+                        들어가있어서 바뀌지 않음 -->
+                    {% if user.profile_image %}
+                    <img class="profile_basic_image" width="128" height="128" src="{{ user.profile_image.url }}"
+                        alt="프로필">
+                    {% endif %}
+                </div>
+                <div class="h_profile">
+                    <h1>{{ user }}님의 프로필</h1>
+                </div>
+            </div>
+            <div>
+                {% if request.user == user %}
+                <a href="{% url 'profile_update' user.nickname %}" class="account_update">계정 수정</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <div class="profile_body">
+        <div>
+            <div class="profile_introduction">
+                <fieldset class=" field_box">
+                    <legend class="my_introduction">자기 소개</legend>
+                    {{ user.short_info }}
+                </fieldset>
+            </div>
+        </div>
+        <hr>
+        <div class="profile_email">
+            <p>이메일: {{ user.email }}</p>
+        </div>
+        <hr>
+        <div class="profile_nickname">
+            <p>닉네임: {{ user.nickname }}</p>
+        </div>
+        <hr>
+        <div class="profile_birthdate">
+            <p>생년 월일: {{ user.birth_date }}</p>
+        </div>
+        <hr>
+        <div class="profile_account_build">
+            <p>계정 생성 날짜: {{ user.created_at }}</p>
+        </div>
+        <hr>
+    </div>
 
-    <p>이메일: {{ user.email }}</p>
-    <p>닉네임: {{ user.nickname }}</p>
-    <p>생년월일: {{ user.birth_date }}</p>
-    <p>계정생성날짜: {{ user.created_at }}</p>
-    <p>자기 소개: {{ user.short_info }}</p>
-    <p>프로필 사진</p>
-    {% if user.profile_image %}
-        <img width="128" height="128" src="{{ user.profile_image.url }}" alt="프로필">
-    {% endif %}
+</div>
 {% endblock %}

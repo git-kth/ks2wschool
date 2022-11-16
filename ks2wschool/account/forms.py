@@ -65,13 +65,13 @@ class LoginUserForm(forms.Form):
     email = forms.EmailField(
         label='email', 
         error_messages={'required': '이메일을 입력해주세요'},
-        widget=forms.EmailInput
+        widget=forms.EmailInput(attrs = {'placeholder' : 'Username(Email)'})
     )
 
     password = forms.CharField(
         label='password', 
         error_messages={'required': '비밀번호를 입력해주세요'},
-        widget=forms.PasswordInput
+        widget=forms.PasswordInput(attrs = {'placeholder' : 'Password'})
     )
     
     def clean(self):                                           
