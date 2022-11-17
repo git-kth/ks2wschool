@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block title %}
-<link rel="stylesheet" type="text/css" href="{% static 'profile.css' %}?after=6">
+<link rel="stylesheet" type="text/css" href="{% static 'profile.css' %}?after=16">
 <title>{{ user }} 프로필</title>
 {% endblock %}
 {% block content %}
@@ -40,6 +40,10 @@
                     {{ user.short_info }}
                 </fieldset>
             </div>
+        </div>
+        <hr>
+        <div class="profile_name">
+            <p>이름: {{ user.name }}</p>
         </div>
         <hr>
         <div class="profile_email">
