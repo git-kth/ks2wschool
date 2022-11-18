@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block content %}
+<div>
+    <h5>글 수정</h5>
+    <form method="post">
+        {% csrf_token %}
+
+        {{ form.errors }}
+        
+        {% for field in form %}
+            {% if field.errors %}
+                {{ field.errors }}
+            {% endif %}
+            {{ field.label }}
+            {{ field }}
+            <br><br><br>
+        {% endfor %}
+            </div>
+        <button type="submit" class="btn btn-primary">수정하기</button>
+    </form>
+
+</div>
+{% endblock %}

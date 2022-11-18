@@ -1,7 +1,10 @@
 {% extends 'base.html' %}
 {% block content %}
     <h4>{{ post.category }} 카테고리 게시글입니다.</h4>
-        
+    {% if user.is_authenticated %}
+    <a href="{% url 'delete_post' post.id %}">삭제</a>
+    <a href="{% url 'update_post' post.id %}">수정</a>
+    {% endif %}
         <p>글 제목 : {{ post.title }}</p>
         <p>글 내용 : {{ post.content }}</p>
         <p>글쓴이 : {{ post.author }}</p>
@@ -15,7 +18,9 @@
                         <span class="text-danger small mx-2">  ({{ comment.reply_set.count }})</span>
                     {% endif %}
                     </p>
-                    <p>작성자 :{{ comment.author.nickname}} ({{ comment.create_date }})</p>
+                    <p>작성자 :{{ comment.author.nickname}} ({{ comment.create_date }})
+                        <a href="{% url 'delete_comment' %}">삭제</a>
+                    </p>
                     {% if comment.reply_set.all %}
                         {% for reply in comment.reply_set.all %}
                             <p>⤷⤷ {{reply.content}}/  작성자: {{ reply.author.nickname}} ({{reply.create_date}})</p>
@@ -47,7 +52,8 @@
                 <label for="{{ field.id_for_label }}">{{ field.label }}:</label>
                 {{ field }}
             {% endfor %}
-            <input type="submit" value="comment 작성">
-        </form>    
+            <input type="submit" value="comment 작성">    
+        </form>
+        
         
 {% endblock %}

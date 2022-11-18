@@ -24,6 +24,7 @@ class Category(models.Model):
     create_date = models.DateTimeField(default=timezone.now)
     modify_date = models.DateTimeField(null=True, blank=True)
     author = models.ForeignKey(User, on_delete=models.CASCADE)
+    
 
     def __str__(self):
         return self.name

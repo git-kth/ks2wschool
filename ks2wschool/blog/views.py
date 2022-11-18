@@ -30,6 +30,22 @@ def create_category(request):
         
 
 
+# @login_required(login_url='login')
+# def update_category(request,nickname,category_name):
+#     category = get_object_or_404(Category, name=category_name)
+#     user = get_object_or_404(User, nickname=nickname)
+#     if request.method == 'POST':
+#         form = CreateCategory(request.POST,instance=category)
+        
+#         if form.is_valid():
+#             category = form.save(commit=False)
+#             category.author = request.user
+#             category.save()
+#             return redirect('view_posts/<str:nickname>/<str:category_name>',
+#                  {'category':category,'user':user})
+#     else:
+#         form = CreateCategory(instance =category)
+#     return render(request, 'blog/update_category.html',{'form': form})
 
 
 
@@ -60,6 +76,28 @@ def create_post(request):
         form = CreatePost(request.user)
     return render(request, 'blog/create_post.html', {'form': form})
 
+@login_required(login_url='login')
+def update_post(request,post_id):
+    post = Post.objects.get(id=post_id)
+    if request.method == 'POST':
+        form = CreatePost(request.user, request.POST,instance=post)
+        
+        if form.is_valid():
+            post = form.save(commit=False)
+            post.author = request.user
+            post.save()
+            return redirect('detail_post', post_id=post.id)
+    else:
+        form = CreatePost(request.user,instance =post)
+    return render(request, 'blog/update_post.html',{'form': form})
+
+
+@login_required(login_url='login')
+def delete_post(request, post_id):
+    post = get_object_or_404(Post, pk=post_id)
+    post.delete()
+    return redirect('index')
+
 
 def detail_post(request, post_id):
     post = get_object_or_404(Post, pk=post_id)
@@ -84,6 +122,25 @@ def create_comment(request):
         form = CreateComment()
     return redirect('detail_post', {'form': form})
 
+
+# @login_required(login_url='login')
+# def delete_comment(request,post_id):
+#     post = Post.objects.get(id=post_id)
+#     comment = Comment.objects.get(id= post.comment_set.all()[0].id)
+#     post = comment.post
+#     comment.delete()
+#     return redirect('detail_post',post_id=post.id)
+
+@login_required(login_url='login')
+def delete_comment(request,post_id):
+    post = get_object_or_404(Post,pk=post_id)
+    comment = post.comment_set.all()
+    comment.delete()
+    return redirect('detail_post',post_id=post.id)
+
+
+#reply
+# ---------------------------------------------------------------------------------------------------------------------------------------------------------------------
 @login_required(login_url='login')
 def create_reply(request):
     comment = get_object_or_404(Comment, pk=request.GET.get('comment_id', None))
