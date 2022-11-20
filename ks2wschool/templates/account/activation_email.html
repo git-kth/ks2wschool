@@ -1,2 +1,13 @@
-{{ user.nickname }}님, 아래 링크를 클릭하여 계정을 활성화하세요:
-http://{{domain}}{% url 'activate' uid token %}
+<!DOCTYPE html>
+<html lang="en">
+
+<body>
+    <fieldset class=" field_box">
+        <legend class="link">
+            {{ user.nickname }}님, 아래 링크를 클릭하여 계정을 활성화하세요:
+            http://{{domain}}{% url 'activate' uid token %}</legend>
+    </fieldset>
+
+</body>
+
+</html>

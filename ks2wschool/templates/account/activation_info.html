@@ -1,8 +1,56 @@
 {% extends 'base.html' %}
-
 {% block content %}
-    <p>{{ email }}에 인증메일이 발송되었습니다.</p>
-    <p>메일에서 계정을 활성화해주세요.</p>
-    <p>메일에서 계정을 활성화한 후 다시 로그인해주세요.</p>
-    <a href="{% url 'login' %}">로그인</a>
+<!DOCTYPE html>
+<html lang="en">
+<style>
+    .email__img {
+        border-radius: 70%;
+        width: 250;
+        height: 250;
+    }
+
+    .field_box {
+        border-radius: 15px;
+        border-color: #99CCFF;
+    }
+
+    .login-btn {
+        display: block;
+        border: 1px solid black;
+        width: 100px;
+        text-align: center;
+        margin-top: 30px;
+        padding: 5px;
+        text-decoration: none;
+        display: inline-block;
+        color: black;
+        cursor: pointer;
+    }
+
+    .login-btn:hover {
+        color: white;
+        background-color: #99CCFF;
+    }
+</style>
+
+<body>
+
+    <fieldset class=" field_box">
+        <div class="email__img">
+            <img src="/static/images/email.png" alt="이메일 전송로고">
+        </div>
+        <p>{{ email }}에 인증메일이 발송되었습니다.</p>
+        <p>메일에서 계정을 활성화해주세요.</p>
+        <p>메일에서 계정을 활성화한 후 다시 로그인해주세요.</p>
+    </fieldset>
+
+
+    <div>
+        <a href="{% url 'login' %}" class="login-btn">LOGIN</a>
+    </div>
+
+
+</body>
+
+</html>
 {% endblock %}

@@ -86,7 +86,10 @@ img {
 .login__icon {
     font-size: 1.5rem;
     color: #99CCFF;
+
 }
+
+
 
 .login__input {
     border: none;
@@ -179,6 +182,7 @@ img {
     BORDER: NONE;
     width: 100%;
 }
+
 
 @keyframes animateLogin {
     0% {

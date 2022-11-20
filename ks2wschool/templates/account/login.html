@@ -2,6 +2,7 @@
 {% load static %}
 {% block style %}
 <link rel='stylesheet' href="{% static 'login.css' %}?after=31">
+<link href='https://unpkg.com/boxicons@2.0.7/css/boxicons.min.css' rel='stylesheet'>
 {% endblock %}
 {% block content %}
 <div class="login">
@@ -35,8 +36,8 @@
                 <a href="#" class="login__forgot">Forgot ID/Password? </a>
 
                 <button class="sign_button">
-                    <div class="login__button">
-                        <a href="{% url 'login' %}">Sign In</a>
+                    <div>
+                        <a href="{% url 'login' %}" class="login__button">Sign In</a>
                     </div>
                 </button>
                 <!-- 수정요망 -->
