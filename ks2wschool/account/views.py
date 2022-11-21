@@ -8,6 +8,7 @@ from django.utils.encoding import force_bytes, force_str
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404
 from django.contrib import messages
+from blog.models import *
 
 from account.models import User
 from account.forms import CreateUserForm, LoginUserForm, UpdateUserForm
