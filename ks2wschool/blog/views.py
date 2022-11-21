@@ -41,6 +41,7 @@ def update_category(request,nickname,category_name):
         if form.is_valid():
             category = form.save(commit=False)
             category.author = request.user
+            category.modify_date = timezone.now()
             category.save()
             return redirect('index')
     else:

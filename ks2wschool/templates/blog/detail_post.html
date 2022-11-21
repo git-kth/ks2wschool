@@ -1,12 +1,13 @@
 {% extends 'base.html' %}
+{% load filter %}
 {% block content %}
     <h4>{{ post.category }} 카테고리 게시글입니다.</h4>
     {% if user.is_authenticated %}
     <a href="{% url 'delete_post' post.id %}">삭제</a>
     <a href="{% url 'update_post' post.id %}">수정</a>
     {% endif %}
-        <p>글 제목 : {{ post.title }}</p>
-        <p>글 내용 : {{ post.content }}</p>
+        <p>글 제목 : {{ post.title|mark }}</p>
+        <p>글 내용 : {{ post.content|mark }}</p>
         <p>글쓴이 : {{ post.author }}</p>
         <div>
             <a href="{% url 'post_vote' post.id %}">
@@ -19,7 +20,7 @@
             {% for comment in post.comment_set.all %}
             <tr>
                 <td>
-                    <p>댓글 내용 : {{comment.content}}
+                    <p>댓글 내용 : {{comment.content|mark}}
                         {% if comment.reply_set.count > 0 %}
                         <span class="text-danger small mx-2">  ({{ comment.reply_set.count }})</span>
                     {% endif %}
@@ -30,7 +31,7 @@
                     </p>
                     {% if comment.reply_set.all %}
                         {% for reply in comment.reply_set.all %}
-                            <p>⤷⤷ {{reply.content}}/  작성자: {{ reply.author.nickname}} ({{reply.create_date}})</p>
+                            <p>⤷⤷ {{reply.content|mark}}/  작성자: {{ reply.author.nickname}} ({{reply.create_date}})</p>
                             <a href="{% url 'delete_reply' reply.id %}">삭제</a>
                         {% endfor %}
                     {% else %}
