@@ -66,9 +66,6 @@
             <div>
                 팔로잉 : {{ person.followings.all|length }} / 팔로워 : {{ person.followings.all|length }}
             </div>
-<<<<<<< HEAD
-=======
-
             {% if user != person %} 
             <div>
                 <form action="{% url 'user_follow' user.nickname%}" method='POST'>
@@ -83,7 +80,6 @@
             {% endif %}
         </div>
     </div>
->>>>>>> 76620e55e26e4c73bc8976115f322801be81b398
     </div>
 </div>
 {% endblock %}
