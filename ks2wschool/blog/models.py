@@ -12,7 +12,8 @@ class Post(models.Model):
     # hits = models.PositiveIntegerField(default=0)
     category = models.ForeignKey("Category", on_delete=models.CASCADE)
     author = models.ForeignKey(User, on_delete=models.CASCADE)
-
+    voter = models.ManyToManyField(User, related_name='voter_post')
+    
     class Meta:
         ordering = ['-create_date']
         
