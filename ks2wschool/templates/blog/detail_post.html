@@ -1,58 +1,73 @@
 {% extends 'base.html' %}
 {% load filter %}
+{% load static %}
 {% block content %}
-    <h4>{{ post.category }} 카테고리 게시글입니다.</h4>
-    {% if user.is_authenticated %}
-    <a href="{% url 'delete_post' post.id %}">삭제</a>
-    <a href="{% url 'update_post' post.id %}">수정</a>
-    {% endif %}
-        <p>글 제목 : {{ post.title|mark }}</p>
-        <p>글 내용 : {{ post.content|mark }}</p>
-        <p>글쓴이 : {{ post.author }}</p>
-        <div>
+<link rel='stylesheet' href="{% static 'detail_post.css' %}?after=31">
+<style>
+    
+</style>
+    <div id="post_head">{{ post.category }} 카테고리 게시글입니다.</div>
+    <hr>
+    <div id="post_main">
+        <div id="post_title"><h2>글 제목 : {{ post.title }}</h2></div>
+          <div id="post_main_left">
+            <div id="post_writer"><p>글쓴이 : {{ post.author }}</p></div>
+            <div id="post_good">
             <a href="{% url 'post_vote' post.id %}">
                 추천 
                 <span class ="badge rounded-pill bg-success">{{post.voter.count}}</span>
             </a>
-        </div>
-        <p>-----------------------------</p>
+            </div>
+          </div>    
+        <div id="content">{{ post.content|mark }}</div>
+        
+    </div>
+    
+    {% if user.is_authenticated %} 
+    <button> <a href="{% url 'delete_post' post.id %}">삭제</a></button>
+    <button> <a href="{% url 'update_post' post.id %}">수정</a></button>
+    {% endif %}
+        
+       
+        
+        <hr>
+        <div id ="post_post">
         {% if post.comment_set.count > 0 %}
             {% for comment in post.comment_set.all %}
-            <tr>
-                <td>
-                    <p>댓글 내용 : {{comment.content|mark}}
+            
+                    <div id="post_reply_writer">{{ comment.author.nickname}} 
+                        <button><a href="{% url 'delete_comment' comment.id %}">삭제</a></button>
+                        <button><a href="{% url 'update_comment' comment.id %}">수정</a></button>
+                    </div>
+                    <div id="post_reply"> {{comment.content}} ({{ comment.create_date }}) 
                         {% if comment.reply_set.count > 0 %}
                         <span class="text-danger small mx-2">  ({{ comment.reply_set.count }})</span>
                     {% endif %}
-                    </p>
-                    <p>작성자 :{{ comment.author.nickname}} ({{ comment.create_date }})
-                        <a href="{% url 'delete_comment' comment.id %}">삭제</a>
-                        <a href="{% url 'update_comment' comment.id %}">수정</a>
-                    </p>
+                    </div>
+                    
                     {% if comment.reply_set.all %}
                         {% for reply in comment.reply_set.all %}
-                            <p>⤷⤷ {{reply.content|mark}}/  작성자: {{ reply.author.nickname}} ({{reply.create_date}})</p>
-                            <a href="{% url 'delete_reply' reply.id %}">삭제</a>
+                            <div id="post_reply_again">⤷⤷  {{ reply.author.nickname}} :{{reply.content}} ({{reply.create_date}})   </div>
+                           <button id="post_delete"> <a href="{% url 'delete_reply' reply.id %}">Delete</a></button>
                         {% endfor %}
                     {% else %}
-                        <p>답글 없음</p>
+                        <div id="post_another_reply">Nodata</div>
                     {% endif %}
-                    <form action="{% url 'create_reply' %}?comment_id={{ comment.id }}" method = "post">
+                    <div action="{% url 'create_reply' %}?comment_id={{ comment.id }}" method = "post">
                         {% csrf_token %}
                     {% for field in reply_form %}
                         {{ field.errors }}
-                        <label for="{{ field.id_for_label }}">{{ field.label }}:</label>
+                        <div id="mb"><label for="{{ field.id_for_label }}">{{ field.label }}:</label></div>
                         {{ field }}
                         {% endfor %}
-                        <input type="submit" value="reply 작성">
+                        <input type="submit" value="답글">
                         </form>    
-                    <p>-----------------------------</p>
+                    <hr>
                     
-                </td>
-            </tr>
+         
             {% endfor %}
         {% else %}
-            <p>댓글 없음.</p>
+            <div id="post_nodata">No data</div>
         {% endif %}
         <form action="{% url 'create_comment' %}?post_id={{ post.id }}" method = "post">
             {% csrf_token %}
@@ -61,8 +76,8 @@
                 <label for="{{ field.id_for_label }}">{{ field.label }}:</label>
                 {{ field }}
             {% endfor %}
-            <input type="submit" value="comment 작성">    
+            <input type="submit" value="답글">    
         </form>
-        
+        </div>     
         
 {% endblock %}

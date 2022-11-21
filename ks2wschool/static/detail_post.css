@@ -1,0 +1,49 @@
+#post_head{
+    
+    background-color:darkgray;
+}
+#post_main{
+    background-color: blanchedalmond;
+    display: flex;
+    flex-direction: column;
+    /* justify-content: center;
+    align-items: center; */
+
+}
+#post_main_left{
+    display: flex;
+    justify-content: start;
+    /* align-items: start; */
+    flex-direction: column;
+    
+}
+#post_post {
+    background-color: plum;
+}
+#mb label{
+     background-color: aquamarine;
+
+
+
+}
+#id_content{
+    background-color: blueviolet;
+    width: 100px;
+    height: 50px;
+}
+#post_delete{
+    display: block;
+    border: 1px solid black;
+    width: 100px;
+    text-align: center;
+    padding: 5px;
+    text-decoration: none;
+
+    color: black;
+    cursor: pointer;
+}
+
+#post_delete:hover {
+    color: white;
+    background-color: #99CCFF;
+}
