@@ -67,12 +67,14 @@ def delete_category(request,nickname,category_name):
 
 @login_required(login_url='login')
 def post_vote(request, post_id):
-    post = get_object_or_404(Post, id=post_id)
-    if request.user in post.voter.all():
-        post.voter.remove(request.user)
-    else:
-        post.voter.add(request.user)
-    return redirect('detail_post',post_id=post_id)
+    if request.user.is_authenticated:
+        post = get_object_or_404(Post, id=post_id)
+        if post.voter.filter(id=request.user.id).exists():
+            post.voter.remove(request.user)
+        else:
+            post.voter.add(request.user)
+        return redirect('detail_post',post_id=post_id)
+    return redirect('accounts:login')
 
 
 def view_posts(request, nickname, category_name):
