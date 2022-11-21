@@ -15,6 +15,7 @@
                 <span class ="badge rounded-pill bg-success">{{post.voter.count}}</span>
             </a>
         </div>
+        <h5 class="hits">조회수 : {{post.hits}} </h5>
         <p>-----------------------------</p>
         {% if post.comment_set.count > 0 %}
             {% for comment in post.comment_set.all %}

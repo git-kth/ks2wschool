@@ -1,3 +1,4 @@
+from datetime import date, datetime, timedelta
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from blog.models import *
@@ -128,7 +129,24 @@ def detail_post(request, post_id):
     post = get_object_or_404(Post, pk=post_id)
     comment_form = CreateComment()
     reply_form = CreateReply()
-    return render(request, 'blog/detail_post.html', {'post': post, 'comment_form': comment_form, 'reply_form': reply_form})
+    
+    response = render(request, 'blog/detail_post.html', {'post': post, 'comment_form': comment_form, 'reply_form': reply_form})
+    # 조회수 기능은 쿠키를 이용하는데 쿠키에 열람한 게시글에 관한 데이터를 넣음
+    # 쿠키는 만료기간을 조절하는 것으로 조회수 증가 기준을 정함
+    expire_date, now = datetime.now(), datetime.now()
+    expire_date += timedelta(days=1)
+    expire_date = expire_date.replace(hour=0, minute=0, second=0, microsecond=0)
+    expire_date -= now
+    max_age = expire_date.total_seconds()
+
+    cookie_value = request.COOKIES.get('hitblog', '_')
+
+    if f'_{id}_' not in cookie_value:
+        cookie_value += f'{id}_'
+        response.set_cookie('hitblog', value=cookie_value, max_age=max_age, httponly=True)
+        post.hits += 1
+        post.save()
+    return response
 
 # comment
 # -----------------------------------------------------------------------------------------------------------------------------------------------
