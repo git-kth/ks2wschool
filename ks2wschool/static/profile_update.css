@@ -1,0 +1,70 @@
+html {
+    min-width: 1024px;
+    font-family: "SF Pro KR", "SF Pro Display", "SF Pro Icons", "Apple Gothic", "HY Gulim", "MalgunGothic", "HY Dotum", "Lexi Gulim", "Helvetica Neue", "Helvetica", "Arial", sans-serif;
+}
+
+hr {
+    background-color: #99CCFF;
+    height: 1px;
+    border: 0;
+}
+
+
+/* .update_container{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    background-color: aqua;
+} */
+
+.update_name, .update_nickname,
+.update_birth_date, .update_short_info,
+.update_profile_image{
+    display: flex; 
+    justify-content: start;
+    /* display: grid;
+    grid-template-columns: repeat(2, 150px); */
+}
+
+#image_container{
+    display: flex;
+    justify-content: center;
+}
+b{
+    color: #6666CC;
+}
+
+.name_info, .nickname_info,
+.birth_date_info, .short_info_info,
+.profile_image_info, .info_box,
+input[name = "profile_image"]{
+    display: flex;
+    justify-content: start;
+    margin-right: 15px;
+    margin-top: 8px;
+    margin-bottom: 8px;
+}
+
+
+.delete, .input_box {
+    display: block;
+    border: 1px solid black;
+    width: 120px;
+    text-align: center;
+    padding: 5px;
+    text-decoration: none;
+    color: black;
+    cursor: pointer;
+    justify-content: center;
+    background: transparent;
+}
+
+.delete:hover, .input_box:hover {
+    color: white;
+    background-color: #99CCFF;
+}
+
+.delete_box, .input_class{
+    display: flex;
+    justify-content: center;
+}

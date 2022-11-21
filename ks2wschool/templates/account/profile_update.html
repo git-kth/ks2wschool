@@ -1,30 +1,80 @@
 {% extends 'base.html' %}
+{% load static %}
 {% block title %}
+    <link rel="stylesheet" type="text/css" href="{% static 'profile_update.css' %}?after=1231">
     <title>{{ request.user.nickname }} 프로필 수정</title>
 {% endblock %}
 
 {% block content %}
-    <h1>{{ request.user.nickname }}님의 프로필 수정</h1>
+<h1>{{ request.user.nickname }}님의 프로필 수정</h1>
     {{ form.non_field_errors }}
-    <form method="post" enctype="multipart/form-data">
-        {% csrf_token %}
-        {% for field in form %}
-            {{ field.errors }}
-            <label for="{{ field.id_for_label }}">{{ field.label }}:</label>
-            {% if field.name == 'profile_image' %}
-                {% if field.value %}
-                <p>기존 프로필</p>
-                <div><img width="128" height="128" src="/media/{{ field.value }}" alt="기존 프로필"></div>
-                {% endif %}
-                
+        <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ field.errors }}
+    <hr>
+    <div class = "update_container">
+        <div class = "update_name">
+            <div class = "name_info">
+                <b> 이름 : </b>  
+            </div>
+            <div class = "info_box">
+                {{ form.name }}
+            </div>
+        </div>
+        <hr>
+        <div class = "update_nickname">
+            <div class = "nickname_info">
+                <b> 닉네임 : </b> 
+            </div>
+            <div class = "info_box">
+                {{ form.nickname }}
+            </div>
+        </div>
+        <hr>
+        <div class = "update_birth_date">
+            <div class = "birth_date_info">
+                <b> 생일 : </b> 
+            </div>
+            <div class = "info_box">
+                {{ form.birth_date }}
+            </div>
+        </div>
+        <hr>
+        <div class = "update_short_info">
+            <div class = "short_info_info">
+                <b> 자기소개 : </b> 
+            </div>
+            <div class = "info_box">
+                {{ form.short_info }}
+            </div>
+        </div>
+        <hr>
+        <div class = "update_profile_image">
+            <div class = "profile_image_info">
+                <b> 프로필 이미지 : </b> 
+            </div class = "info_box">
+                {{ form.profile_image }}
+                {% if form.profile_image.name == 'profile_image' %}
+                    {% if form.profile_image.value %}
+                        <p>기존 프로필</p>
+                        <div class = "info_box"><img width="128" height="128" src="/media/{{ form.profile_image.value }}" alt="기존 프로필"></div>
+                    {% endif %}
                 <div id="image_container"></div>
-            {% endif %}
-            {{ field }}
-            <br><br><br>
-        {% endfor %}
-        <input type="submit" value="적용">
+                {% endif %}
+                {{ field }}
+            <hr>
+        </div>
+        <hr>
+        <br>
+    </div>
+    <div class = "input_class">
+        <input class = "input_box" style = "font-size: 17px;" type="submit" value="적용">
+    </div>
+        <br><br>
     </form>
-    <a class="delete" href="javascript:void(0)" data-uri="{% url 'profile_delete' request.user.nickname %}">계정  삭제하기</a>
+    <div  class = "delete_box">
+        <a class="delete" href="javascript:void(0)" data-uri="{% url 'profile_delete' request.user.nickname %}">계정  삭제하기</a>
+    </div>
     <script>
         document.getElementById('id_profile_image').addEventListener('change', function(event){
             var reader = new FileReader();
