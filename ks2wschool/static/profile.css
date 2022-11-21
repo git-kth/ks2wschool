@@ -55,7 +55,7 @@ html {
 
 
 .field_box {
-    border-radius: 10px;
+    border-radius: 15px;
 }
 
 .profile_name,
@@ -75,4 +75,8 @@ hr {
     background-color: #99CCFF;
     height: 1px;
     border: 0;
+}
+
+b {
+    color: #6666CC;
 }
