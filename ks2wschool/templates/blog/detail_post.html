@@ -19,11 +19,13 @@
                     {% endif %}
                     </p>
                     <p>작성자 :{{ comment.author.nickname}} ({{ comment.create_date }})
-                        <a href="{% url 'delete_comment' %}">삭제</a>
+                        <a href="{% url 'delete_comment' comment.id %}">삭제</a>
+                        <a href="{% url 'update_comment' comment.id %}">수정</a>
                     </p>
                     {% if comment.reply_set.all %}
                         {% for reply in comment.reply_set.all %}
                             <p>⤷⤷ {{reply.content}}/  작성자: {{ reply.author.nickname}} ({{reply.create_date}})</p>
+                            <a href="{% url 'delete_reply' reply.id %}">삭제</a>
                         {% endfor %}
                     {% else %}
                         <p>답글 없음</p>

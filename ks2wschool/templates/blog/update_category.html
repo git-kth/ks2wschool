@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% block title %}<title>카테고리 수정</title>{% endblock %}
+{% block content %}
+<div>
+    <h5>카테고리 수정</h5>
+    <form method="post">
+        {% csrf_token %}
+        <!-- 오류표시 Start -->
+        {% if form.errors %}
+        <div class="alert alert-danger" role="alert">
+            {% for field in form %}
+            {% if field.errors %}
+            <div>
+                <strong>{{ field.label }}</strong>
+                {{ field.errors }}
+            </div>
+            {% endif %}
+            {% endfor %}
+        </div>
+        {% endif %}
+        {{ form.as_p }}
+        <!-- 오류표시 End -->
+        <button type="submit" class="btn btn-primary">수정하기</button>
+    </form>
+</div>
+{% endblock %}

@@ -47,6 +47,7 @@
             <p>카테고리</p>
             {% for category in user.category_set.all %}
             <a href="{% url 'view_posts' user.nickname category.name %}">{{ category }}</a>
+           
             {% endfor %}
             {% endif %}
         </div>

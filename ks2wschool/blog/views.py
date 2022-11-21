@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from blog.models import *
 from account.models import User
+from django.contrib import messages
 from blog.forms import CreateCategory, CreatePost, CreateComment, CreateReply
 # Create your views here.
 
@@ -30,24 +31,31 @@ def create_category(request):
         
 
 
-# @login_required(login_url='login')
-# def update_category(request,nickname,category_name):
-#     category = get_object_or_404(Category, name=category_name)
-#     user = get_object_or_404(User, nickname=nickname)
-#     if request.method == 'POST':
-#         form = CreateCategory(request.POST,instance=category)
+@login_required(login_url='login')
+def update_category(request,nickname,category_name):
+    category = get_object_or_404(Category, name=category_name)
+    user = get_object_or_404(User, nickname=nickname)
+    if request.method == 'POST':
+        form = CreateCategory(request.POST,instance=category)
         
-#         if form.is_valid():
-#             category = form.save(commit=False)
-#             category.author = request.user
-#             category.save()
-#             return redirect('view_posts/<str:nickname>/<str:category_name>',
-#                  {'category':category,'user':user})
-#     else:
-#         form = CreateCategory(instance =category)
-#     return render(request, 'blog/update_category.html',{'form': form})
+        if form.is_valid():
+            category = form.save(commit=False)
+            category.author = request.user
+            category.save()
+            return redirect('index')
+    else:
+        form = CreateCategory(instance =category)
+    return render(request, 'blog/update_category.html',{'form': form})
 
 
+@login_required(login_url='login')
+def delete_category(request,nickname,category_name):
+    if request.user.is_authenticated:
+        category = get_object_or_404(Category, name=category_name)
+        user = get_object_or_404(User, nickname=nickname)
+        if request.user == category.author:
+            category.delete()
+    return redirect('index')
 
 
 
@@ -85,6 +93,7 @@ def update_post(request,post_id):
         if form.is_valid():
             post = form.save(commit=False)
             post.author = request.user
+            post.modify_date = timezone.now()
             post.save()
             return redirect('detail_post', post_id=post.id)
     else:
@@ -94,8 +103,10 @@ def update_post(request,post_id):
 
 @login_required(login_url='login')
 def delete_post(request, post_id):
-    post = get_object_or_404(Post, pk=post_id)
-    post.delete()
+    if request.user.is_authenticated:
+        post = get_object_or_404(Post, pk=post_id)
+        if request.user == post.author:
+            post.delete()
     return redirect('index')
 
 
@@ -122,21 +133,32 @@ def create_comment(request):
         form = CreateComment()
     return redirect('detail_post', {'form': form})
 
+@login_required(login_url='login')
+def update_comment(request,comment_id):
+    comment = get_object_or_404(Comment,id=comment_id)
+    post = comment.post
+    if request.method == 'POST':
+        form = CreateComment(request.POST,instance=comment)
+        
+        if form.is_valid():
+            comment = form.save(commit=False)
+            comment.author = request.user
+            comment.save()
+            return redirect('detail_post', post_id=post.id)
+    else:
+        form = CreateComment(instance =comment)
+    context = {'comment':comment, 'form':form}
+    return redirect('detail_post', context)
 
-# @login_required(login_url='login')
-# def delete_comment(request,post_id):
-#     post = Post.objects.get(id=post_id)
-#     comment = Comment.objects.get(id= post.comment_set.all()[0].id)
-#     post = comment.post
-#     comment.delete()
-#     return redirect('detail_post',post_id=post.id)
 
 @login_required(login_url='login')
-def delete_comment(request,post_id):
-    post = get_object_or_404(Post,pk=post_id)
-    comment = post.comment_set.all()
-    comment.delete()
-    return redirect('detail_post',post_id=post.id)
+def delete_comment(request,comment_id):
+    if request.user.is_authenticated:
+        comment = get_object_or_404(Comment,id=comment_id)
+        post = comment.post
+        if request.user == comment.author:
+            comment.delete()
+        return redirect('detail_post',post_id=post.id)
 
 
 #reply
@@ -156,3 +178,13 @@ def create_reply(request):
         form = CreateReply()
     context = {'form':form}
     return redirect('detail_post',context)
+
+@login_required(login_url='login')
+def delete_reply(request,reply_id):
+    if request.user.is_authenticated:
+        reply = Reply.objects.get(id=reply_id)
+        comment = reply.comment
+        post = reply.comment.post
+        if request.user == reply.author:
+            reply.delete()
+    return redirect('detail_post',post_id=post.id)
