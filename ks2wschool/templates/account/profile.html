@@ -62,6 +62,36 @@
             <p><b>계정 생성 날짜 : </b>{{ user.created_at }}</p>
         </div>
         <hr>
+        <div>
+            <div>
+                팔로잉 : {{ person.followings.all|length }} / 팔로워 : {{ person.followings.all|length }}
+            </div>
+
+            {% if user != person %} 
+            <div>
+                <form action="{% url 'user_follow' user.nickname%}" method='POST'>
+                    {% csrf_token %}
+                    {% if user in person.followers.all %}
+                        <input type="submit" value='팔로우 취소'>
+                    {% else %}
+                        <input type="submit" value='팔로우'>
+                    {% endif %}
+                </form>
+            </div>
+            {% endif %}
+        </div>
     </div>
+    <h3>좋아요 한 글</h3>
+    {% for post in user.voter_post.all %}
+        <a href="{% url 'detail_post' post.id %}">
+            <p>{{ post.title }}</p>
+        </a>   
+    {% endfor %}
+    <h3>댓글단 글</h3>
+    {% for comment in user.comment_set.all %}
+        <a href="{% url 'detail_post' comment.post.id %}">
+            <p>{{comment.post.title}}</p>
+        </a>
+    {% endfor %}
 </div>
 {% endblock %}
