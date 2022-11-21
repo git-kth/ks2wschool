@@ -44,6 +44,7 @@ class User(AbstractBaseUser):
     short_info = models.TextField(max_length=128, blank=True, default='')
     is_active = models.BooleanField(default=False)
     is_admin = models.BooleanField(default=False)
+    followings = models.ManyToManyField('self' , symmetrical=False, related_name='followers')
     
     def date_uuid_upload_to(instance, filename):
         date_path = timezone.now().strftime('%Y/%m/%d')
