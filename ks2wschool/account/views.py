@@ -126,4 +126,17 @@ def profile_delete(request, nickname):
         return redirect('profile', nickname=nickname)
     user.delete()
     return redirect('index')
-        
+
+
+@login_required(login_url='login')
+def follow(request,nickname):
+    if request.user.is_authenticated:
+        person = get_object_or_404(User,nickname=nickname)
+        if person != request.user:
+            if person.followers.filter(nickname = nickname).exists():
+                person.followers.remove(request.user)
+            else:
+                person.followers.add(request.user)
+        return redirect('profile',nickname=nickname)
+
+    return redirect('accounts:login', nickname=nickname)
