@@ -13,6 +13,8 @@ class Post(models.Model):
     category = models.ForeignKey("Category", on_delete=models.CASCADE)
     author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='author_question')
     voter = models.ManyToManyField(User, blank=True, related_name='voter_post')
+    hits = models.PositiveBigIntegerField(default=1, verbose_name='조회수')
+
     
     class Meta:
         ordering = ['-create_date']

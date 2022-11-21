@@ -1,18 +1,88 @@
 {% extends 'base.html' %}
-{% block title %}
-    <title>회원가입</title>
+{% load static %}
+{% block style %}
+<link rel='stylesheet' href="{% static 'signup.css' %}?after=61">
+<link href='https://unpkg.com/boxicons@2.0.7/css/boxicons.min.css' rel='stylesheet'>
 {% endblock %}
 {% block content %}
+<div class="login">
+    <div class="login__content">
+        <div class="login__img">
+            <img src="/static/images/loginlogo.png" alt="로그인 로고">
+        </div>
+        <div class="login__forms">
+            <!--         create account form -->
+            {{ form.non_field_errors }}
+            <form method="post" class="login__create none" id="login-up">
+                {% csrf_token %}
+
+                <h1 class="login__title">Create Account</h1>
+
+                <div class="login__box">
+                    <i class='bx bx-at login__icon'></i>
+                    <div class="login__input">Email</div>
+                    <!-- <input type="text" placeholder="Email" > -->
+                    {{ form.email }}
+                </div>
+
+                <div class="login__box">
+                    <i class='bx bx-user login__icon'></i>
+                    <div class="login__input">Nickname</div>
+                    <!-- <input type="text" placeholder="Nickname" class="login__input"> -->
+                    {{ form.nickname }}
+                </div>
+
+                <div class="login__box">
+                    <i class='bx bx-lock login__icon'></i>
+                    <div class="login__input">Password</div>
+                    <!-- <input type="password" placeholder="Password" class="login__input"> -->
+                    {{ form.password1 }}
+                </div>
+
+                <div class="login__box">
+                    <i class='bx bx-lock login__icon'></i>
+                    <div class="login__input">Confirmation</div>
+                    <!-- <input type="password" placeholder="Password confirmation" class="login__input"> -->
+                    {{ form.password2 }}
+                </div>
+
+                <div class="login__box">
+                    <i class='bx bx-user login__icon'></i>
+                    <div class="login__input">Name</div>
+                    <!-- <input type="text" placeholder="Name" class="login__input"> -->
+                    {{ form.name }}
+                </div>
+
+                <div class="login__box">
+                    <i class='bx bx-user login__icon'></i>
+                    <div class="login__input">Birthdate
+                    </div>
+                    <div class="date">{{ form.birth_date }}</div>
+                    <!-- <input type="text" placeholder="Name" class="login__input"> -->
+
+                </div>
+
+                <a class="sign_button">
+                    <div>
+                        <!-- class="border_box" -->
+                        <input class="login__button" type="submit" value="Sign up">
+                    </div>
+                </a>
+
+            </form>
+        </div>
+    </div>
+</div>
 
 {{ form.non_field_errors }}
-    <form method="post">
-        {% csrf_token %}
-        {% for field in form %}
-            {{ field.errors }}
-            <label for="{{ field.id_for_label }}">{{ field.label }}:</label>
-            {{ field }}
-            <br><br><br>
-        {% endfor %}
-        <input type="submit" value="가입">
-    </form>
+<form method="post">
+    {% csrf_token %}
+    {% for field in form %}
+    {{ field.errors }}
+    <label for="{{ field.id_for_label }}">{{ field.label }}:</label>
+    {{ field }}
+    <br><br><br>
+    {% endfor %}
+    <input type="submit" value="가입">
+</form>
 {% endblock %}
