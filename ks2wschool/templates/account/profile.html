@@ -90,7 +90,7 @@
     <h3>댓글단 글</h3>
     {% for comment in user.comment_set.all %}
         <a href="{% url 'detail_post' comment.post.id %}">
-            <p>{{comment.post.title}}</p>
+            <p>{{comment.post.count}} </p>
         </a>
     {% endfor %}
 </div>
