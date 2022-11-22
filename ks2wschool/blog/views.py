@@ -12,7 +12,7 @@ def index(request):
     if request.user.is_authenticated:
         post_list = Post.objects.filter(author=request.user).order_by('-create_date')
     else:
-        post_list = Post.objects.order_by('-create_date')
+        post_list = Post.objects.order_by('-voter').values()
     context = {'post_list': post_list}
 
     return render(request, 'blog/index.html', context)

@@ -3,33 +3,25 @@
     <h4>{{ category.name }}의 게시판 입니다.</h4>
     <a href="{% url 'update_category' user.nickname category.name %}"> 카테고리 수정??</a>
     <a href="{% url 'delete_category' user.nickname category.name %}"> 카테고리 삭제!!</a>
-    <table>
-        <thead>
-            <tr class="table-dark">
-                <th>번호</th>
-                <th>제목</th>
-                <th>작성일시</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% if post_list %}
-            {% for p in post_list %}
-            <tr>
-                <td>{{forloop.counter}}</td>
-                <td>
-                    <a href="{% url 'detail_post' p.id %}"> {{ p.title }}</a>
-                    {% if p.comment_set.count > 0 %}
-                        <span class="text-danger small mx-2">  ({{ p.comment_set.count }})</span>
-                    {% endif %}
-                </td>
-                <td>  {{ p.create_date }}</td>
-            </tr>
-            {% endfor %}
-        {% else %}
-            <p>카테고리 없음.</p>
-        {% endif %}
-        </tbody>
-    </table>    
+    <hr>   
+    {% if post_list %}
+       {% for p in post_list %}
+            {{forloop.counter}}    
+            <a href="{% url 'detail_post' p.id %}"> {{ p.title }}</a>
+                {% if p.comment_set.count > 0 %}
+                   ({{ p.comment_set.count }})
+                {% endif %}
+                글 쓴 날짜 :
+                {{ p.create_date }}
+                {% if p.modify_date %}
+                (수정 날짜 :
+                {{ p.modify_date }} )
+                {% endif %}
+                <hr>
+        {% endfor %}
+    {% else %}
+        <p>카테고리 없음.</p>
+    {% endif %}
     <!-- 페이징처리 시작 -->
     <ul class="pagination justify-content-center">
        {% for page_number in post_list.paginator.page_range %} 

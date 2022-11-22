@@ -140,3 +140,32 @@ def follow(request,nickname):
         return redirect('profile', user.nickname)
 
     return redirect('login')
+
+@login_required(login_url='login')
+def following(request,nickname):
+    if request.user.is_authenticated:
+        user = get_object_or_404(User,nickname=nickname)
+        if user != request.user:
+            if user.followers.filter(nickname = request.user.nickname).exists():
+                user.followers.remove(request.user)
+            else:
+                user.followers.add(request.user)
+        return render(request,'account/following.html',{'user.nickname':user.nickname})
+
+    return redirect('login')
+    
+#  나중에 수정 하기 뷰 하나로 합치로 get 받기
+
+
+@login_required(login_url='login')
+def follower(request,nickname):
+    if request.user.is_authenticated:
+        user = get_object_or_404(User,nickname=nickname)
+        if user != request.user:
+            if user.followers.filter(nickname = request.user.nickname).exists():
+                user.followers.remove(request.user)
+            else:
+                user.followers.add(request.user)
+        return render(request,'account/follower.html',{'user.nickname':user.nickname})
+
+    return redirect('login')

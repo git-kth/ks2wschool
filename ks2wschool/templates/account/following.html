@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}
+{% endblock %}
+
+{% block content %}
+{{user.nickname}}님을 팔로잉 하는 사람 :
+    {% for following in user.followings.all %}
+        <a href="{% url 'profile' following.nickname %}">{{following.nickname}}</a> 
+    <br>
+    {% endfor %}
+{% endblock %}
+
+

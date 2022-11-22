@@ -64,21 +64,23 @@
         <hr>
         <div>
             <div>
-                팔로잉 : {{ person.followings.all|length }} / 팔로워 : {{ person.followings.all|length }}
+                <a href="{% url 'following' user.nickname %}">팔로잉</a>  : {{ user.followings.all|length }} 
+                / <a href="{% url 'follower' user.nickname %}">팔로워</a>  : {{ user.followers.all|length }}
+                <hr>
             </div>
-
-            {% if user != person %} 
+          
+            {% if request.user != user %}
             <div>
-                <form action="{% url 'user_follow' user.nickname%}" method='POST'>
-                    {% csrf_token %}
-                    {% if user in person.followers.all %}
-                        <input type="submit" value='팔로우 취소'>
-                    {% else %}
-                        <input type="submit" value='팔로우'>
-                    {% endif %}
-                </form>
-            </div>
-            {% endif %}
+              <form action="{% url 'follow' user.nickname %}" method='POST'>
+                {% csrf_token %}
+                {% if request.user in user.followers.all %}
+                  <input type="submit" value='팔로우 취소'>
+                {% else %}
+                  <input type="submit" value='팔로우'>
+                {% endif %}
+              </form>
+            </div>  
+          {% endif %}
         </div>
     </div>
     <h3>좋아요 한 글</h3>
@@ -90,7 +92,7 @@
     <h3>댓글단 글</h3>
     {% for comment in user.comment_set.all %}
         <a href="{% url 'detail_post' comment.post.id %}">
-            <p>{{comment.post.count}} </p>
+            <p>{{comment.post}} </p>
         </a>
     {% endfor %}
 </div>

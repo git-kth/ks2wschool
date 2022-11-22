@@ -6,7 +6,12 @@
     <a href="{% url 'delete_post' post.id %}">삭제</a>
     <a href="{% url 'update_post' post.id %}">수정</a>
     {% endif %}
-        <p>글 제목 : {{ post.title|mark }}</p>
+        <p>글 쓴 날짜 : {{post.create_date}}
+        {% if post.modify_date %}
+                (수정 날짜 :
+                {{ post.modify_date }} )
+        {% endif %}</p>
+        <h1>{{ post.title|mark }}</h1>
         <p>글 내용 : {{ post.content|mark }}</p>
         <p>글쓴이 : {{ post.author }}</p>
         <div>
