@@ -1,9 +1,11 @@
 from datetime import date, datetime, timedelta
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from blog.models import *
-from account.models import User
 from django.contrib import messages
+from django.db.models import Q
+from django.http import JsonResponse
+from account.models import User
+from blog.models import *
 from blog.forms import CreateCategory, CreatePost, CreateComment, CreateReply
 # Create your views here.
 
@@ -220,3 +222,14 @@ def delete_reply(request,reply_id):
         if request.user == reply.author:
             reply.delete()
     return redirect('detail_post',post_id=post.id)
+
+
+def user_search(request):
+    search_val = request.GET.get('search_val')
+    user_list = User.objects.all()
+    if search_val:
+        user_list = user_list.filter(
+            Q(nickname__icontains=search_val)
+        ).distinct()
+    user_list = [user.nickname for user in user_list]
+    return JsonResponse({"user_list" : user_list})

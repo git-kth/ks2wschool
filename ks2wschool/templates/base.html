@@ -12,23 +12,26 @@
 <body>
     <div id="wrap">
         <div id="header-bar">
-
+            <input type="text" class="user-search">
+            <div class="user-search-list">
+                
+            </div>
             <div>
                 <a href="{% url 'index' %}"><img class="home-logo" src="/static/images/logo.png" alt="로고"
                         width="90"></a>
             </div>
 
             <div class="user-box">
-                {% if user.is_authenticated %}
+                {% if request.user.is_authenticated %}
                 <div class="profile-image">
-                    {% if user.profile_image %}
-                    <img width="90" height="90" src="{{ user.profile_image.url }}" alt="프로필">
+                    {% if request.user.profile_image %}
+                    <img width="90" height="90" src="{{ request.user.profile_image.url }}" alt="프로필">
                     {% else %}
                     <img width="90" height="90" src="{% static 'images/basic_profile.png' %}" alt="프로필">
                     {% endif %}
                 </div>
                 <div class="profile-info">
-                    <a class="loginout-btn" style="margin-bottom: 5px;" href="{% url 'profile' user.nickname %}">MY
+                    <a class="loginout-btn" style="margin-bottom: 5px;" href="{% url 'profile' request.user.nickname %}">MY
                         INFO</a>
                     <a class="loginout-btn" href="{% url 'logout' %}">LOGOUT</a>
                 </div>
@@ -43,10 +46,10 @@
         </div>
         <div id="side-bar">
             <a href="{% url 'create_category' %}">카테고리 생성</a>
-            {% if user.is_authenticated %}
+            {% if request.user.is_authenticated %}
             <p>카테고리</p>
-            {% for category in user.category_set.all %}
-            <a href="{% url 'view_posts' user.nickname category.name %}">{{ category }}</a>
+            {% for category in request.user.category_set.all %}
+            <a href="{% url 'view_posts' request.user.nickname category.name %}">{{ category }}</a>
            
             {% endfor %}
             {% endif %}
@@ -67,7 +70,26 @@
         </header> -->
 
 
-
+    <script>
+        $('.user-search').on('keyup', function(){
+            $.ajax({
+                url: "{% url 'user_search' %}",
+                type: "get",
+                data: {
+                    'search_val' : this.value
+                },
+                datatype : 'json',
+                success: function(data){
+                    user_list_box = document.getElementsByClassName('user-search-list');
+                    user_list_box[0].innerHTML = '';
+                    data['user_list'].forEach(user => {
+                        user_list_box[0].innerHTML += '<a href="/account/' + user + '">' + user + "</a>";
+                        user_list_box[0].innerHTML += '<br>';
+                    });
+                }
+            });
+        });
+    </script>
 
 </body>
 
