@@ -23,12 +23,12 @@ def index(request):
 def create_category(request):
     if request.method == 'POST':
         form = CreateCategory(request.POST)
-        if form.is_valid():
+        if form.is_valid() and int(request.POST['author']) == request.user.id:
             category = form.save(commit=False)
-            category.author = request.user
             category.save()
             return redirect('index')
     else:
+        print('aa')
         form = CreateCategory()
     return render(request, 'blog/create_category.html',{'form': form})
         
