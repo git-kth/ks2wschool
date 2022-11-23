@@ -4,6 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.db.models import Q
 from django.http import JsonResponse
+
 from account.models import User
 from blog.models import *
 from blog.forms import CreateCategory, CreatePost, CreateComment, CreateReply
@@ -24,10 +25,13 @@ def create_category(request):
     if request.method == 'POST':
         form = CreateCategory(request.POST)
         if form.is_valid():
-            category = form.save(commit=False)
-            category.author = request.user
-            category.save()
-            return redirect('index')
+            if Category.objects.filter(name=form.cleaned_data['name'], author=request.user).count() > 0:
+                messages.error(request, '이미 카테고리가 있습니다.')
+            else:
+                category = form.save(commit=False)
+                category.author = request.user
+                category.save()
+                return redirect('index')
     else:
         form = CreateCategory()
     return render(request, 'blog/create_category.html',{'form': form})
