@@ -19,7 +19,7 @@ class CreatePost(forms.ModelForm):
 class CreateCategory(forms.ModelForm):
     class Meta:
         model = Category
-        fields = ['name']
+        fields = ['name', 'author']
         labels = {
             'name':'카테고리 이름',
         }
