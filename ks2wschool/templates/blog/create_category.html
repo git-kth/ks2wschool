@@ -5,6 +5,11 @@
     <h5>카테고리 생성</h5>
     <form method="post">
         {{ form.errors }}
+        {% if messages %}
+            {% for message in messages %}
+                {{ message }}
+            {% endfor %}
+        {% endif %}
         {% csrf_token %}
         <!-- 오류표시 Start -->
         <input type="text" name="name" maxlength="200" required="" id="id_name">

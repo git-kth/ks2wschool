@@ -40,8 +40,8 @@ def create_category(request):
 
 @login_required(login_url='login')
 def update_category(request,nickname,category_name):
-    category = get_object_or_404(Category, name=category_name)
     user = get_object_or_404(User, nickname=nickname)
+    category = get_object_or_404(Category, name=category_name, author=user)
     if request.method == 'POST':
         form = CreateCategory(request.POST,instance=category)
         
@@ -59,8 +59,8 @@ def update_category(request,nickname,category_name):
 @login_required(login_url='login')
 def delete_category(request,nickname,category_name):
     if request.user.is_authenticated:
-        category = get_object_or_404(Category, name=category_name)
         user = get_object_or_404(User, nickname=nickname)
+        category = get_object_or_404(Category, name=category_name, author=user)
         if request.user == category.author:
             category.delete()
     return redirect('index')
@@ -85,8 +85,8 @@ def post_vote(request, post_id):
 
 
 def view_posts(request, nickname, category_name):
-    category = get_object_or_404(Category, name=category_name)
     user = get_object_or_404(User, nickname=nickname)
+    category = get_object_or_404(Category, name=category_name, author=user)
     post_list = Post.objects.filter(author=user, category=category)
     return render(request, 'blog/view_posts.html', {'post_list': post_list, 'category': category})
 
