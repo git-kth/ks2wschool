@@ -36,6 +36,11 @@ img {
     margin-right: 1.5rem;
 }
 
+.error {
+    display: block;
+    padding-right: 15px;
+}
+
 .login__content {
     display: grid;
 }

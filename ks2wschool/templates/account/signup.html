@@ -17,6 +17,9 @@
                 {% csrf_token %}
 
                 <h1 class="login__title">Create Account</h1>
+                {% for field in form %}
+                {{ field.errors }}
+                {% endfor %}
 
                 <div class="login__box">
                     <i class='bx bx-at login__icon'></i>
@@ -24,6 +27,7 @@
                     <!-- <input type="text" placeholder="Email" > -->
                     {{ form.email }}
                 </div>
+
 
                 <div class="login__box">
                     <i class='bx bx-user login__icon'></i>
@@ -74,15 +78,4 @@
     </div>
 </div>
 
-{{ form.non_field_errors }}
-<form method="post">
-    {% csrf_token %}
-    {% for field in form %}
-    {{ field.errors }}
-    <label for="{{ field.id_for_label }}">{{ field.label }}:</label>
-    {{ field }}
-    <br><br><br>
-    {% endfor %}
-    <input type="submit" value="가입">
-</form>
 {% endblock %}
