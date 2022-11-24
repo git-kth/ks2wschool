@@ -1,9 +1,12 @@
 from datetime import date, datetime, timedelta
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from blog.models import *
-from account.models import User
 from django.contrib import messages
+from django.db.models import Q
+from django.http import JsonResponse
+
+from account.models import User
+from blog.models import *
 from blog.forms import CreateCategory, CreatePost, CreateComment, CreateReply
 # Create your views here.
 
@@ -22,10 +25,13 @@ def create_category(request):
     if request.method == 'POST':
         form = CreateCategory(request.POST)
         if form.is_valid():
-            category = form.save(commit=False)
-            category.author = request.user
-            category.save()
-            return redirect('index')
+            if Category.objects.filter(name=form.cleaned_data['name'], author=request.user).count() > 0:
+                messages.error(request, '이미 카테고리가 있습니다.')
+            else:
+                category = form.save(commit=False)
+                category.author = request.user
+                category.save()
+                return redirect('index')
     else:
         form = CreateCategory()
     return render(request, 'blog/create_category.html',{'form': form})
@@ -34,29 +40,32 @@ def create_category(request):
 
 @login_required(login_url='login')
 def update_category(request,nickname,category_name):
-    category = get_object_or_404(Category, name=category_name)
-    user = get_object_or_404(User, nickname=nickname)
-    if request.method == 'POST':
-        form = CreateCategory(request.POST,instance=category)
-        
-        if form.is_valid():
-            category = form.save(commit=False)
-            category.author = request.user
-            category.modify_date = timezone.now()
-            category.save()
-            return redirect('index')
+    if request.user.nickname == nickname:
+        user = get_object_or_404(User, nickname=nickname)
+        category = get_object_or_404(Category, name=category_name, author=user)
+        if request.method == 'POST':
+            form = CreateCategory(request.POST,instance=category)
+            if form.is_valid():
+                category = form.save(commit=False)
+                category.modify_date = timezone.now()
+                category.save()
+                return redirect('index')
+        else:
+            form = CreateCategory(instance =category)
     else:
-        form = CreateCategory(instance =category)
+        messages.error(request, '수정 권한이 없습니다.')
     return render(request, 'blog/update_category.html',{'form': form})
 
 
 @login_required(login_url='login')
 def delete_category(request,nickname,category_name):
-    if request.user.is_authenticated:
-        category = get_object_or_404(Category, name=category_name)
+    if request.user.nickname == nickname:
         user = get_object_or_404(User, nickname=nickname)
+        category = get_object_or_404(Category, name=category_name, author=user)
         if request.user == category.author:
             category.delete()
+    else:
+        messages.error(request, '삭제 권한이 없습니다.')
     return redirect('index')
 
 
@@ -79,8 +88,8 @@ def post_vote(request, post_id):
 
 
 def view_posts(request, nickname, category_name):
-    category = get_object_or_404(Category, name=category_name)
     user = get_object_or_404(User, nickname=nickname)
+    category = get_object_or_404(Category, name=category_name, author=user)
     post_list = Post.objects.filter(author=user, category=category)
     return render(request, 'blog/view_posts.html', {'post_list': post_list, 'category': category})
 
@@ -220,3 +229,14 @@ def delete_reply(request,reply_id):
         if request.user == reply.author:
             reply.delete()
     return redirect('detail_post',post_id=post.id)
+
+
+def user_search(request):
+    search_val = request.GET.get('search_val')
+    user_list = User.objects.all()
+    if search_val:
+        user_list = user_list.filter(
+            Q(nickname__icontains=search_val)
+        ).distinct()
+    user_list = [user.nickname for user in user_list]
+    return JsonResponse({"user_list" : user_list})

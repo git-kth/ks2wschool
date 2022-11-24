@@ -27,7 +27,7 @@
             </div>
             <div>
                 {% if request.user == user %}
-                <a href="{% url 'profile_update' user.nickname %}" class="account_update">계정 수정</a>
+                <a href="{% url 'profile_update' request.user.nickname %}" class="account_update">계정 수정</a>
                 {% endif %}
             </div>
         </div>
@@ -64,21 +64,21 @@
         <hr>
         <div>
             <div>
-                팔로잉 : {{ person.followings.all|length }} / 팔로워 : {{ person.followings.all|length }}
+                팔로잉 : {{ user.followings.all|length }} / 팔로워 : {{ user.followers.all|length }}
             </div>
-
-            {% if user != person %} 
+          
+            {% if request.user != user %}
             <div>
-                <form action="{% url 'user_follow' user.nickname%}" method='POST'>
-                    {% csrf_token %}
-                    {% if user in person.followers.all %}
-                        <input type="submit" value='팔로우 취소'>
-                    {% else %}
-                        <input type="submit" value='팔로우'>
-                    {% endif %}
-                </form>
-            </div>
-            {% endif %}
+              <form action="{% url 'follow' user.nickname %}" method='POST'>
+                {% csrf_token %}
+                {% if request.user in user.followers.all %}
+                  <input type="submit" value='팔로우 취소'>
+                {% else %}
+                  <input type="submit" value='팔로우'>
+                {% endif %}
+              </form>
+            </div>  
+          {% endif %}
         </div>
     </div>
 
