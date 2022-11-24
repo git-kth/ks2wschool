@@ -2,59 +2,60 @@
 {% load filter %}
 {% load static %}
 {% block content %}
-<link rel='stylesheet' href="{% static 'detail_post.css' %}?after=31">
-<style>
-    
-</style>
-    <div id="post_head">{{ post.category }} 카테고리 게시글입니다.</div>
+<link rel='stylesheet' href="{% static 'detail_post.css' %}?after=150 ">
+
+    <div id="post_head">
+        <span class="s_post_head">zzz{{ post.category }}</span>    
+    </div>
     <hr>
     <div id="post_main">
-        <div id="post_title"><h2>글 제목 : {{ post.title }}</h2></div>
-          <div id="post_main_left">
-            <div id="post_writer"><p>글쓴이 : {{ post.author }}</p></div>
-            <div id="post_good">
-            <a href="{% url 'post_vote' post.id %}">
-                추천 
-                <span class ="badge rounded-pill bg-success">{{post.voter.count}}</span>
-            </a>
-
-            </div>
-          </div>    
-        <div id="content">{{ post.content|mark }}</div>
         
+        <div id="post_writer"><span class="s_post_writer">👧🏻 {{ post.author }}</span></div>
+        <div class="hits">
+            <span class="s_hits">조회수 : {{post.hits}}</span> </div>
+        <div id="post_title"><span class="s_post_title"> {{ post.title }}</></div>
+        <hr/>
+
+        <div id="content">{{ post.content|mark }}</div>
+   
     </div>
-    
-    {% if user.is_authenticated %} 
-    <button> <a href="{% url 'delete_post' post.id %}">삭제</a></button>
-    <button> <a href="{% url 'update_post' post.id %}">수정</a></button>
+
+    <div id="post_good">
+        <a href="{% url 'post_vote' post.id %}">
+            <button class ="s_post_good">추천 {{post.voter.count}} 💗</button>
+            {% if user.is_authenticated %}  
+            <button class="s_content_delete"> <a href="{% url 'delete_post' post.id %}">삭제</a></button>
+            <button  class="s_content_again"> <a href="{% url 'update_post' post.id %}">수정</a></button>
+            
+        </a>
+
+      </div>  
+      
+
+  
     {% endif %}
         
-       
+     
         
-        <hr>
-        <div id ="post_post">
-
-        </div>
-        <h5 class="hits">조회수 : {{post.hits}} </h5>
-        <p>-----------------------------</p>
+        
+      
 
         {% if post.comment_set.count > 0 %}
             {% for comment in post.comment_set.all %}
-            
-                    <div id="post_reply_writer">{{ comment.author.nickname}} 
-                        <button><a href="{% url 'delete_comment' comment.id %}">삭제</a></button>
-                        <button><a href="{% url 'update_comment' comment.id %}">수정</a></button>
-                    </div>
-                    <div id="post_reply"> {{comment.content}} ({{ comment.create_date }}) 
+                
+                    <div id="post_reply_writer"><span class="s_post_reply_writer" >{{comment.author.nickname}}</span>  </div>
+                    <div id="post_reply"> <span class="s_post_reply">{{comment.content}} </span> </div>
+                    <div id="post_date"><span class="s_post_date"> {{ comment.create_date }}</span> </div>                                                 
                         {% if comment.reply_set.count > 0 %}
                         <span class="text-danger small mx-2">  ({{ comment.reply_set.count }})</span>
                     {% endif %}
-                    </div>
+                    <button class="s_post_reply_again" ><a href="{% url 'update_comment' comment.id %}">수정</a></button>
+                    <button class="s_post_reply_delete"><a href="{% url 'delete_comment' comment.id %}">삭제</a></button>
                     
                     {% if comment.reply_set.all %}
                         {% for reply in comment.reply_set.all %}
                             <div id="post_reply_again">⤷⤷  {{ reply.author.nickname}} :{{reply.content}} ({{reply.create_date}})   </div>
-                           <button id="post_delete"> <a href="{% url 'delete_reply' reply.id %}">Delete</a></button>
+                           <button id="post_delete"> <a href="{% url 'delete_reply' reply.id %}">삭제</a></button>
                         {% endfor %}
                     {% else %}
                         <div id="post_another_reply">Nodata</div>
