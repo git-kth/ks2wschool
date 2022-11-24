@@ -16,9 +16,9 @@ urlpatterns += [
 # post
 urlpatterns += [
     path('post/<int:post_id>/', views.detail_post, name="detail_post"),
-    path('create_post/', views.create_post, name="create_post"),
-    path('update_post/<int:post_id>',views.update_post,name="update_post"),
-    path('delete_post/<int:post_id>/', views.delete_post, name="delete_post"),
+    path('blog_create/', views.create_post, name="blog_create"),
+    path('blog_update/<int:post_id>',views.update_post,name="blog_update"),
+    path('blog_delete/<int:post_id>/', views.delete_post, name="blog_delete"),
     path('post_vote/<int:post_id>', views.post_vote ,name="post_vote"),
 ]
 # comment, reply

@@ -10,6 +10,7 @@
             <a href="{% url 'detail_post' p.id %}"> {{ p.title }}</a>
                 {% if p.comment_set.count > 0 %}
                    ({{ p.comment_set.count }})
+                {{p.content|truncatechars:7}}
                 {% endif %}
                 글 쓴 날짜 :
                 {{ p.create_date }}

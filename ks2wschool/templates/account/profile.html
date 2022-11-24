@@ -64,8 +64,8 @@
         <hr>
         <div>
             <div>
-                <a href="{% url 'following' user.nickname %}">팔로잉</a>  : {{ user.followings.all|length }} 
-                / <a href="{% url 'follower' user.nickname %}">팔로워</a>  : {{ user.followers.all|length }}
+                <a href="{% url 'view_follow' user.nickname %}?sort=following">팔로잉</a>  : {{ user.followings.all|length }} 
+                / <a href="{% url 'view_follow' user.nickname %}?sort=follower">팔로워</a>  : {{ user.followers.all|length }}
                 <hr>
             </div>
           

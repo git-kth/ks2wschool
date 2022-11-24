@@ -4,6 +4,7 @@ from django.contrib.auth.decorators import login_required
 from blog.models import *
 from account.models import User
 from django.contrib import messages
+from django.core.paginator import Paginator
 from blog.forms import CreateCategory, CreatePost, CreateComment, CreateReply
 # Create your views here.
 
@@ -11,9 +12,19 @@ def index(request):
     context = {}  
     if request.user.is_authenticated:
         post_list = Post.objects.filter(author=request.user).order_by('-create_date')
+        post_create = Post.objects.order_by('-create_date')
+        post_hits = Post.objects.order_by('-hits')
     else:
-        post_list = Post.objects.order_by('-voter').values()
-    context = {'post_list': post_list}
+        sorting = request.GET.get('sort', '')
+        if sorting == 'create_date':
+            post_list = Post.objects.order_by('-create_date')
+        elif sorting == 'hits':
+            post_list = Post.objects.order_by('-hits')
+        # elif sorting == 'voter':
+        #     post_list = Post.objects.order_by('-voter')
+        else :
+            post_list = Post.objects.order_by('-create_date')
+    context = {'post_list':post_list}
 
     return render(request, 'blog/index.html', context)
 
@@ -180,7 +191,7 @@ def update_comment(request,comment_id):
     else:
         form = CreateComment(instance =comment)
     context = {'comment':comment, 'form':form}
-    return redirect('detail_post', context)
+    return redirect('detail_post',context)
 
 
 @login_required(login_url='login')
