@@ -40,29 +40,32 @@ def create_category(request):
 
 @login_required(login_url='login')
 def update_category(request,nickname,category_name):
-    user = get_object_or_404(User, nickname=nickname)
-    category = get_object_or_404(Category, name=category_name, author=user)
-    if request.method == 'POST':
-        form = CreateCategory(request.POST,instance=category)
-        
-        if form.is_valid():
-            category = form.save(commit=False)
-            category.author = request.user
-            category.modify_date = timezone.now()
-            category.save()
-            return redirect('index')
+    if request.user.nickname == nickname:
+        user = get_object_or_404(User, nickname=nickname)
+        category = get_object_or_404(Category, name=category_name, author=user)
+        if request.method == 'POST':
+            form = CreateCategory(request.POST,instance=category)
+            if form.is_valid():
+                category = form.save(commit=False)
+                category.modify_date = timezone.now()
+                category.save()
+                return redirect('index')
+        else:
+            form = CreateCategory(instance =category)
     else:
-        form = CreateCategory(instance =category)
+        messages.error(request, '수정 권한이 없습니다.')
     return render(request, 'blog/update_category.html',{'form': form})
 
 
 @login_required(login_url='login')
 def delete_category(request,nickname,category_name):
-    if request.user.is_authenticated:
+    if request.user.nickname == nickname:
         user = get_object_or_404(User, nickname=nickname)
         category = get_object_or_404(Category, name=category_name, author=user)
         if request.user == category.author:
             category.delete()
+    else:
+        messages.error(request, '삭제 권한이 없습니다.')
     return redirect('index')
 
 

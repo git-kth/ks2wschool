@@ -12,12 +12,7 @@
 <body>
     <div id="wrap">
         <div id="header-bar">
-            <input type="text" class="user-search">
-            <div class="user-search-list">
-                
-            </div>
-            <div>
-                <a href="{% url 'index' %}"><img class="home-logo" src="/static/images/logo.png" alt="로고"
+            <a href="{% url 'index' %}"><img class="home-logo" src="/static/images/logo.png" alt="로고"
                         width="90"></a>
             </div>
 
@@ -70,26 +65,6 @@
         </header> -->
 
 
-    <script>
-        $('.user-search').on('keyup', function(){
-            $.ajax({
-                url: "{% url 'user_search' %}",
-                type: "get",
-                data: {
-                    'search_val' : this.value
-                },
-                datatype : 'json',
-                success: function(data){
-                    user_list_box = document.getElementsByClassName('user-search-list');
-                    user_list_box[0].innerHTML = '';
-                    data['user_list'].forEach(user => {
-                        user_list_box[0].innerHTML += '<a href="/account/' + user + '">' + user + "</a>";
-                        user_list_box[0].innerHTML += '<br>';
-                    });
-                }
-            });
-        });
-    </script>
 
 </body>
 
