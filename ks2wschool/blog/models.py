@@ -23,12 +23,17 @@ class Post(models.Model):
         return self.title
 
 class Category(models.Model):
-    name = models.CharField(max_length=200,unique=True)
+    name = models.CharField(max_length=200)
     create_date = models.DateTimeField(default=timezone.now)
     modify_date = models.DateTimeField(null=True, blank=True)
     author = models.ForeignKey(User, on_delete=models.CASCADE)
-    
 
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['name', 'author'], name='unique_migration_host_combination'
+            )
+        ]
     def __str__(self):
         return self.name
 

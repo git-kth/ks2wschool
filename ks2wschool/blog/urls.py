@@ -3,6 +3,7 @@ from blog import views
 
 urlpatterns = [
     path('', views.index, name='index'),
+    path('user_search/', views.user_search, name='user_search'),
 ]
 
 # category
