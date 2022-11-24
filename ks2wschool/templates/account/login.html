@@ -15,12 +15,13 @@
             <form method="POST" action="{% url 'login'%}?next={{ request.path }}" class="login__register" id="login-in">
                 {% csrf_token %}
 
+
+                <h1 class="login__title">Sign In</h1>
                 {% if error %}
                 {{ error }}
                 <br>
                 {% endif %}
                 {{ form.errors }}
-                <h1 class="login__title">Sign In</h1>
                 <div class="login__box">
                     <i class='bx bx-user login__icon'></i>
                     {{ form.email }}
