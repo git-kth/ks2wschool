@@ -158,10 +158,8 @@ def delete_post(request, post_id):
         messages.error(request, '삭제 권한이 없습니다.')
     return redirect('detail_post',post_id=post.id)
 
-@login_required(login_url='login')
 def post_list(request, nickname):
     user = get_object_or_404(User, nickname=nickname)
-    post = user.post_set.all()
     sorting = request.GET.get('sort', '')
 
     if sorting == 'hits':
