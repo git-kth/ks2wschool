@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% block title %}
+    <title>kswschool 메인 페이지</title>
+{% endblock %}
+{% block content %}
+<a href="{% url 'post_list' author.nickname %}?sort=hits">조회순</a>
+<a href="{% url 'post_list' author.nickname %}?sort=create_date">최신순</a>
+<a href="{% url 'post_list' author.nickname %}?sort=voter">좋아요순</a>
+{% for post in post_list %}
+<h1>
+    <a href="{% url 'detail_post' post.id %}">
+        {{ post.title }}
+    </a>
+</h1>
+    <p>
+        <a href="{% url 'profile' post.author.nickname %}">{{ post.author }}</a>
+    </p>
+    <p>{{ post.content }}</p>
+<hr>
+
+{% endfor %}
+{% endblock %}

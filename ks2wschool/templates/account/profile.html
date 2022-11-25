@@ -26,6 +26,9 @@
                 </div>
             </div>
             <div>
+                <a href="{% url 'post_list' author.nickname %}">post_list</a>
+            </div>
+            <div>
                 {% if request.user == author %}
                 <a href="{% url 'profile_update' request.user.nickname %}" class="account_update">계정 수정</a>
                 {% endif %}

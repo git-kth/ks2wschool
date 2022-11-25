@@ -158,6 +158,21 @@ def delete_post(request, post_id):
         messages.error(request, '삭제 권한이 없습니다.')
     return redirect('detail_post',post_id=post.id)
 
+@login_required(login_url='login')
+def post_list(request, nickname):
+    user = get_object_or_404(User, nickname=nickname)
+    post = user.post_set.all()
+    sorting = request.GET.get('sort', '')
+
+    if sorting == 'hits':
+        post_list = user.post_set.all().order_by('-hits','-create_date')
+    elif sorting == 'voter':
+        post_list = user.post_set.all().annotate(like_count=Count('voter')).order_by('-like_count', '-create_date')
+    else:
+        post_list = user.post_set.all().order_by('-create_date')
+    return render(request, 'blog/post_list.html', {'post_list': post_list, 'author': user
+    ,'sorting':sorting})
+
 
 def detail_post(request, post_id):
     post = get_object_or_404(Post, pk=post_id)
