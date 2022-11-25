@@ -145,6 +145,7 @@ def follow(request,nickname):
             user.followers.remove(request.user)
         else:
             user.followers.add(request.user)
+    
     return redirect('profile', user.nickname)
 
 
