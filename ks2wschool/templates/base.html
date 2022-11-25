@@ -57,8 +57,8 @@
             <a href="{% url 'create_category' %}">카테고리 생성</a>
             {% if request.user.is_authenticated %}
             <p>카테고리</p>
-            {% for category in request.user.category_set.all %}
-            <a href="{% url 'view_posts' request.user.nickname category.name %}">{{ category }}</a>
+            {% for category in user.category_set.all %}
+            <a href="{% url 'view_posts' user.nickname category.name %}">{{ category }}</a>
            
             {% endfor %}
             {% endif %}

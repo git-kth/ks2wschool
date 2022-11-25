@@ -3,10 +3,15 @@
 {% block content %}
     <h4>{{ post.category }} 카테고리 게시글입니다.</h4>
     {% if user.is_authenticated %}
-    <a href="{% url 'delete_post' post.id %}">삭제</a>
-    <a href="{% url 'update_post' post.id %}">수정</a>
+    <a href="{% url 'blog_delete' post.id %}">삭제</a>
+    <a href="{% url 'blog_update' post.id %}">수정</a>
     {% endif %}
-        <p>글 제목 : {{ post.title|mark }}</p>
+        <p>글 쓴 날짜 : {{post.create_date}}
+        {% if post.modify_date %}
+                (수정 날짜 :
+                {{ post.modify_date }} )
+        {% endif %}</p>
+        <h1>{{ post.title|mark }}</h1>
         <p>글 내용 : {{ post.content|mark }}</p>
         <p>글쓴이 : {{ post.author }}</p>
         <div>
@@ -26,10 +31,16 @@
                         <span class="text-danger small mx-2">  ({{ comment.reply_set.count }})</span>
                     {% endif %}
                     </p>
-                    <p>작성자 :{{ comment.author.nickname}} ({{ comment.create_date }})
+                    <p>작성자 :{{ comment.author.nickname}} ({{ comment.create_date }})</p>
+                    {% if messages %}
+                        {% for m in messages %}
+                            {{ m }}
+                        {% endfor %}
+                    {% endif %}
+                    {% if request.user.nickname == comment.author.nickname %}
                         <a href="{% url 'delete_comment' comment.id %}">삭제</a>
                         <a href="{% url 'update_comment' comment.id %}">수정</a>
-                    </p>
+                    {% endif %}
                     {% if comment.reply_set.all %}
                         {% for reply in comment.reply_set.all %}
                             <p>⤷⤷ {{reply.content|mark}}/  작성자: {{ reply.author.nickname}} ({{reply.create_date}})</p>

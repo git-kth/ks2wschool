@@ -4,7 +4,16 @@
 {% endblock %}
 {% block content %}
 
-        {% for post in post_list %}
+    {% if user.is_authenticated %}
+        {% if request.user == author %}
+        <a href="{% url 'blog_create' %}">글 생성</a>
+        {% endif %}
+    {% else %}
+    <button><a href="{% url 'index' %}?sort=hits">조회순</a></button>
+    <a href="{% url 'index' %}?sort=create_date">최신순</a>
+    <a href="{% url 'index' %}?sort=voter">좋아요순</a>
+    {% for post in post_list %}
+        
         <h1>
             <a href="{% url 'detail_post' post.id %}">
                 {{ post.title }}
@@ -15,8 +24,8 @@
             </p>
             <p>{{ post.content }}</p>
         <hr>
+        
     {% endfor %}
-
     <ul class="pagination justify-content-center">
         {% if post_list.has_previous %}
             <li class="page-item">

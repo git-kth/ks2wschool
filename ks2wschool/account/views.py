@@ -97,7 +97,16 @@ def activate(request, uidb64, token):
 
 def profile(request, nickname):
     user = get_object_or_404(User, nickname=nickname)
-    return render(request, 'account/profile.html', {'author': user})
+    classification = request.GET.get('class','')
+    if classification == 'comment':
+        collection_list = user.comment_set.all()
+    elif classification == 'reply':
+        collection_list = user.reply_set.all()
+    elif classification == 'voter':
+        collection_list = user.voter_post.all()
+    else:
+        collection_list = user.voter_post.all()
+    return render(request, 'account/profile.html', {'author': user ,'collection_list':collection_list,'classification':classification})
 
 @login_required(login_url='login')
 def profile_update(request, nickname):
@@ -130,13 +139,33 @@ def profile_delete(request, nickname):
 
 @login_required(login_url='login')
 def follow(request,nickname):
-    if request.user.is_authenticated:
-        user = get_object_or_404(User,nickname=nickname)
-        if user != request.user:
-            if user.followers.filter(nickname = request.user.nickname).exists():
-                user.followers.remove(request.user)
-            else:
-                user.followers.add(request.user)
-        return redirect('profile', user.nickname)
+    user = get_object_or_404(User,nickname=nickname)
+    if user != request.user:
+        if user.followers.filter(nickname = request.user.nickname).exists():
+            user.followers.remove(request.user)
+        else:
+            user.followers.add(request.user)
+    return redirect('profile', user.nickname)
 
-    return redirect('login')
+
+@login_required(login_url='login')
+def view_follow(request,nickname):
+    user = get_object_or_404(User,nickname=nickname)
+   
+    if user != request.user:
+        if user.followers.filter(nickname = request.user.nickname).exists():
+            user.followers.remove(request.user)
+        else:
+            user.followers.add(request.user)
+       
+    sorting = request.GET.get('sort', '')
+    if sorting == 'following':
+        follow_list = user.followings.all()
+    elif sorting == 'follower':
+        follow_list = user.followers.all()
+    else :
+        follow_list = user.followings.all()
+    return render(request,'account/follow.html',{'user':user
+        ,'follow_list':follow_list,'sorting':sorting})
+    
+    
