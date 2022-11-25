@@ -4,6 +4,7 @@ from blog import views
 urlpatterns = [
     path('', views.index, name='index'),
     path('user_search/', views.user_search, name='user_search'),
+    path('summernote/', include('django_summernote.urls')),
 ]
 
 # category
@@ -13,6 +14,7 @@ urlpatterns += [
     path('update_category/<str:nickname>/<str:category_name>',views.update_category,name="update_category"),
     path('delete_category/<str:nickname>/<str:category_name>',views.delete_category,name="delete_category"),
 ]
+
 
 # post
 urlpatterns += [

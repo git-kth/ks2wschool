@@ -212,8 +212,8 @@ def update_comment(request,comment_id):
                 comment.save()
                 return redirect('detail_post', post_id=post.id)
         else:
-            form = CreateComment(instance =comment)
-            context = {'comment':comment, 'form':form}
+            form = CreateComment()
+            context = {'form':form}
         return redirect('detail_post',context)
     else:
         messages.error(request, '수정 권한이 없습니다.')

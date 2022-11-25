@@ -1,5 +1,6 @@
 from blog.models import *
 from django import forms
+from django_summernote.widgets import SummernoteWidget
 
 class CreatePost(forms.ModelForm):
     def __init__(self, user, *args, **kwargs):
@@ -13,6 +14,9 @@ class CreatePost(forms.ModelForm):
             'category' : '카테고리',
             'title' : '제목',
             'content' : '내용',
+        }
+        widgets = {
+            'content': SummernoteWidget(),
         }
 
 
