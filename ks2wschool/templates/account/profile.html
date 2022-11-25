@@ -64,8 +64,8 @@
         <hr>
         <div>
             <div>
-                <a href="{% url 'view_follow' user.nickname %}?sort=following">팔로잉</a>  : {{ user.followings.all|length }} 
-                / <a href="{% url 'view_follow' user.nickname %}?sort=follower">팔로워</a>  : {{ user.followers.all|length }}
+                <a href="{% url 'view_follow' author.nickname %}?sort=following">팔로잉</a>  : {{ author.followings.all|length }} 
+                / <a href="{% url 'view_follow' author.nickname %}?sort=follower">팔로워</a>  : {{ author.followers.all|length }}
                 <hr>
             </div>
           
@@ -83,13 +83,13 @@
           {% endif %}
         </div>
     </div>
-    <a href="{% url 'profile' author.nickname%}?class=reply">My Reply</a>
-    <a href="{% url 'profile' author.nickname%}?class=comment">My Comment</a>
-    <a href="{% url 'profile' author.nickname%}?class=voter">좋아요 글</a>
+    <a href="{% url 'profile' author.nickname%}?class=voter">좋아요</a>
+    <a href="{% url 'profile' author.nickname%}?class=comment">댓글</a>
+    <a href="{% url 'profile' author.nickname%}?class=reply">답글</a>
     <hr>
     {% if classification == 'reply' %}
     <hr>
-        <h4>내가 단 답글 모음</h4>
+        <h4>답글 모음</h4>
         {% for c in collection_list %}
         {{forloop.counter}}. 
         <a href="{% url 'detail_post' c.comment.post.id %}">{{ c }}</a>        
@@ -97,7 +97,7 @@
         {% endfor %}
     {% endif %}
     {% if classification == 'comment' %}
-    <h4>내가 단 댓글 모음</h4>
+    <h4>댓글 모음</h4>
     <hr>
         {% for c in collection_list %}
         {{forloop.counter}}.
@@ -106,7 +106,7 @@
         {% endfor %}
     {% endif %}
     {% if classification == 'voter' %} 
-    <h4>내가 좋아요 한 글 모음</h4>
+    <h4>좋아요 한 글 모음</h4>
     <hr>
         {% for c in collection_list %}
         {{forloop.counter}}.

@@ -97,7 +97,7 @@ def activate(request, uidb64, token):
 
 def profile(request, nickname):
     user = get_object_or_404(User, nickname=nickname)
-    classification = request.GET.get('class','')
+    classification = request.GET.get('class','voter')
     if classification == 'comment':
         collection_list = user.comment_set.all()
     elif classification == 'reply':
@@ -151,20 +151,16 @@ def follow(request,nickname):
 @login_required(login_url='login')
 def view_follow(request,nickname):
     user = get_object_or_404(User,nickname=nickname)
-   
-    if user != request.user:
-        if user.followers.filter(nickname = request.user.nickname).exists():
-            user.followers.remove(request.user)
-        else:
-            user.followers.add(request.user)
-       
+    following = user.followings.all()
+    follower = user.followers.all()
     sorting = request.GET.get('sort', '')
+
     if sorting == 'following':
-        follow_list = user.followings.all()
+        follow_list = following
     elif sorting == 'follower':
-        follow_list = user.followers.all()
+        follow_list = follower
     else :
-        follow_list = user.followings.all()
+        follow_list = a
     return render(request,'account/follow.html',{'user':user
         ,'follow_list':follow_list,'sorting':sorting})
     
