@@ -83,9 +83,9 @@
           {% endif %}
         </div>
     </div>
-    <a href="{% url 'profile' request.user.nickname%}?class=reply">My Reply</a>
-    <a href="{% url 'profile' request.user.nickname%}?class=comment">My Comment</a>
-    <a href="{% url 'profile' request.user.nickname%}?class=voter">좋아요 글</a>
+    <a href="{% url 'profile' author.nickname%}?class=reply">My Reply</a>
+    <a href="{% url 'profile' author.nickname%}?class=comment">My Comment</a>
+    <a href="{% url 'profile' author.nickname%}?class=voter">좋아요 글</a>
     <hr>
     {% if classification == 'reply' %}
     <hr>

@@ -8,7 +8,8 @@
         {% if request.user == author %}
         <a href="{% url 'blog_create' %}">글 생성</a>
         {% endif %}
-    {% else %}
+    {% endif %}
+
     <button><a href="{% url 'index' %}?sort=hits">조회순</a></button>
     <a href="{% url 'index' %}?sort=create_date">최신순</a>
     <a href="{% url 'index' %}?sort=voter">좋아요순</a>
