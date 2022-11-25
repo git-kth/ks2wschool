@@ -126,9 +126,26 @@ body {
     top: 0px;
     width: 350px;
     height: 100vh;
-    background-color: #99CCFF;
+    background-color: #699ed3;
     z-index: 10;
     display: none;
+    overflow: auto;
+}
+
+.side-bar-list{
+    display: flex;
+    flex-direction: column;
+    margin-left: 30px;
+}
+
+.side-bar-content{
+    font-size: 21px;
+    margin-bottom: 8px;
+}
+
+.side-bar-content a{
+    text-decoration: none;
+    color: black;
 }
 
 #main {

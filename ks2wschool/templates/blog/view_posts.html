@@ -7,8 +7,8 @@
         {% endfor %}
     {% endif %}
     {% if request.user == user %}
-    <a href="{% url 'update_category' user.nickname category.name %}"> 카테고리 수정??</a>
-    <a href="{% url 'delete_category' user.nickname category.name %}"> 카테고리 삭제!!</a>
+    <a href="{% url 'update_category' author.nickname category.name %}"> 카테고리 수정??</a>
+    <a href="{% url 'delete_category' author.nickname category.name %}"> 카테고리 삭제!!</a>
     {% endif %}
     <hr>   
     {% if post_list %}

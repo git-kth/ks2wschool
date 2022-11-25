@@ -3,7 +3,7 @@
 <html>
 
 <head>
-    <link rel="stylesheet" type="text/css" href="{% static 'style.css' %}?after=31">
+    <link rel="stylesheet" type="text/css" href="{% static 'style.css' %}?after=55">
     {% block style %}{% endblock %}
     <script src="https://code.jquery.com/jquery-latest.min.js" type="text/javascript"></script>
     {% block title %}{% endblock %}
@@ -47,11 +47,28 @@
             <div class="menu-btn" style="margin-left: 85%">
                 <img alt="메뉴" width="30px" src="{% static 'images/menu.png' %}">
             </div>
-                <h2>
-                    {{ author }}
-                    
+                <h2 style="text-align:center; margin-top:25px;">
+                    {% if author %}
+                        {{ author }}님의 카테고리
+                    {% else %}
+                        {% if request.user.is_authenticated %}
+                            {{ request.user }}님의 카테고리
+                        {% else %}
+                            로그인을 해주세요
+                        {% endif %}
+                    {% endif %}
                 </h2>
-            
+                <div class="side-bar-list">
+                    {% if author %}
+                        {% for category in author.category_set.all %}
+                            <div class="side-bar-content"><a href="{% url 'view_posts' author category %}">{{ category }}</a>&nbsp;<span style="font-size:14px;color:rgb(195, 37, 37);">({{ category.post_set.count }})</span></div>
+                        {% endfor %}
+                    {% elif request.user.is_authenticated %}
+                        {% for category in request.user.category_set.all %}
+                        <div class="side-bar-content"><a href="{% url 'view_posts' request.user category %}">{{ category }}</a><span style="font-size:14px;color:rgb(195, 37, 37);">({{ category.post_set.count }})</span></div>
+                        {% endfor %}
+                    {% endif %}
+                </div>
         </div>
         <!-- <div id="side-bar">
             <a href="{% url 'create_category' %}">카테고리 생성</a>

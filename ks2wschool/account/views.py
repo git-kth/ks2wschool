@@ -24,30 +24,30 @@ def login(request):
         if form.is_valid():
             email = form.cleaned_data.get('email')
             password = form.cleaned_data.get('password')
-            user = User.objects.get(email=email)
             # request.session['user'] = form.user_id                 
-            if user.is_active:
-                user = auth.authenticate(email=email, password=password)
-                auth.login(request, user)
-                if request.POST.get('next'):
-                    return redirect(request.POST['next'])
+            user = auth.authenticate(email=email, password=password)
+            if user.is_authenticated:  
+                if user.is_active:
+                    auth.login(request, user)
+                    if request.POST.get('next'):
+                        return redirect(request.POST['next'])
+                    else:
+                        return redirect('index')
                 else:
-                    return redirect('index')
+                    current_site = get_current_site(request) 
+                    message = render_to_string('account/activation_email.html', {
+                    'user': user,
+                    'domain': current_site.domain,
+                    'uid': urlsafe_base64_encode(force_bytes(user.pk)),
+                    'token': account_activation_token.make_token(user),
+                    })
+                    mail_title = user.nickname + "님의 계정 활성화"
+                    mail_to = email
+                    mail = EmailMessage(mail_title, message, to=[mail_to])
+                    mail.send()
+                    return render(request, 'account/activation_info.html', {'email': email})
             else:
-                current_site = get_current_site(request) 
-                message = render_to_string('account/activation_email.html', {
-                'user': user,
-                'domain': current_site.domain,
-                'uid': urlsafe_base64_encode(force_bytes(user.pk)),
-                'token': account_activation_token.make_token(user),
-                })
-                mail_title = user.nickname + "님의 계정 활성화"
-                mail_to = email
-                mail = EmailMessage(mail_title, message, to=[mail_to])
-                mail.send()
-                return render(request, 'account/activation_info.html', {'email': email})
-                
-                # form.add_error('email', '계정을 활성화해주세요')            
+                messages.error(request, '아이디 또는 비밀번호가 틀렸습니다.')
     else:
         form = LoginUserForm()
         next = request.GET.get('next')
