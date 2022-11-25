@@ -18,13 +18,9 @@ from .tokens import account_activation_token
 # Create your views here.
 
 def login(request):
-    if request.user.is_authenticated:
-        if request.GET.get('next'):
-            return resolve_url(request.GET['next'])
-        else:
-            return redirect('index')
     if request.method == 'POST':
         form = LoginUserForm(request.POST)
+        next = request.POST.get('next')
         if form.is_valid():
             email = form.cleaned_data.get('email')
             password = form.cleaned_data.get('password')
@@ -33,7 +29,10 @@ def login(request):
             if user.is_active:
                 user = auth.authenticate(email=email, password=password)
                 auth.login(request, user)
-                return redirect('index')
+                if request.POST.get('next'):
+                    return redirect(request.POST['next'])
+                else:
+                    return redirect('index')
             else:
                 current_site = get_current_site(request) 
                 message = render_to_string('account/activation_email.html', {
@@ -51,7 +50,8 @@ def login(request):
                 # form.add_error('email', '계정을 활성화해주세요')            
     else:
         form = LoginUserForm()
-    return render(request, 'account/login.html', {'form': form})
+        next = request.GET.get('next')
+    return render(request, 'account/login.html', {'form': form , 'next': next})
     
 
 def signup(request):
@@ -106,8 +106,7 @@ def profile(request, nickname):
         collection_list = user.voter_post.all()
     else:
         collection_list = user.voter_post.all()
-    return render(request, 'account/profile.html', {'user': user
-    ,'collection_list':collection_list,'classification':classification})
+    return render(request, 'account/profile.html', {'author': user ,'collection_list':collection_list,'classification':classification})
 
 @login_required(login_url='login')
 def profile_update(request, nickname):
@@ -155,9 +154,8 @@ def view_follow(request,nickname):
     user = get_object_or_404(User,nickname=nickname)
     following = user.followings.all()
     follower = user.followers.all()
-    
-       
     sorting = request.GET.get('sort', '')
+
     if sorting == 'following':
         follow_list = following
     elif sorting == 'follower':
