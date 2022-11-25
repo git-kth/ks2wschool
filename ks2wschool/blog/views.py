@@ -2,8 +2,9 @@ from datetime import date, datetime, timedelta
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from django.db.models import Q
+from django.db.models import Q, Count
 from django.http import JsonResponse
+from django.core.paginator import Paginator
 
 from account.models import User
 from blog.models import *
@@ -12,11 +13,18 @@ from blog.forms import CreateCategory, CreatePost, CreateComment, CreateReply
 
 def index(request):
     context = {}  
-    if request.user.is_authenticated:
-        post_list = Post.objects.filter(author=request.user).order_by('-create_date')
+    sorting = request.GET.get('sort', '')
+    if sorting == 'hits':
+        post_list = Post.objects.order_by('-hits', '-create_date')
+    elif sorting == 'voter':
+        post_list = Post.objects.annotate(like_count=Count('voter')).order_by('-like_count', '-create_date')
     else:
         post_list = Post.objects.order_by('-create_date')
-    context = {'post_list': post_list}
+
+    page = request.GET.get('page', '1')
+    paginator = Paginator(post_list, 10)
+    page_obj = paginator.get_page(page)
+    context = {'post_list': page_obj}
 
     return render(request, 'blog/index.html', context)
 
@@ -91,7 +99,7 @@ def view_posts(request, nickname, category_name):
     user = get_object_or_404(User, nickname=nickname)
     category = get_object_or_404(Category, name=category_name, author=user)
     post_list = Post.objects.filter(author=user, category=category)
-    return render(request, 'blog/view_posts.html', {'post_list': post_list, 'category': category})
+    return render(request, 'blog/view_posts.html', {'post_list': post_list, 'category': category , 'author': user})
 
 
 @login_required(login_url='login')
@@ -139,7 +147,7 @@ def detail_post(request, post_id):
     comment_form = CreateComment()
     reply_form = CreateReply()
     
-    response = render(request, 'blog/detail_post.html', {'post': post, 'comment_form': comment_form, 'reply_form': reply_form})
+    response = render(request, 'blog/detail_post.html', {'post': post, 'comment_form': comment_form, 'reply_form': reply_form, 'author': post.author})
     # 조회수 기능은 쿠키를 이용하는데 쿠키에 열람한 게시글에 관한 데이터를 넣음
     # 쿠키는 만료기간을 조절하는 것으로 조회수 증가 기준을 정함
     expire_date, now = datetime.now(), datetime.now()
