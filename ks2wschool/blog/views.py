@@ -3,6 +3,8 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from blog.forms import CreateCategory, CreatePost, CreateComment, CreateReply
+from blog.models import *
+from django.db.models import Count
 # Create your views here.
 
 def index(request):
@@ -17,8 +19,8 @@ def index(request):
             post_list = Post.objects.order_by('-create_date')
         elif sorting == 'hits':
             post_list = Post.objects.order_by('-hits')
-        # elif sorting == 'voter':
-        #     post_list = Post.objects.order_by('-voter')
+        elif sorting == 'voter':
+            post_list = Post.objects.annotate(like_count=Count('voter')).order_by('-like_count', '-create_date')
         else :
             post_list = Post.objects.order_by('-create_date')
     context = {'post_list':post_list}
@@ -45,9 +47,10 @@ def create_category(request):
 
 @login_required(login_url='login')
 def update_category(request,nickname,category_name):
+    print(request.user.nickname)
+    print(nickname)
     if request.user.nickname == nickname:
-        user = get_object_or_404(User, nickname=nickname)
-        category = get_object_or_404(Category, name=category_name, author=user)
+        category = get_object_or_404(Category, name=category_name, author=request.user)
         if request.method == 'POST':
             form = CreateCategory(request.POST,instance=category)
             if form.is_valid():
@@ -57,9 +60,10 @@ def update_category(request,nickname,category_name):
                 return redirect('index')
         else:
             form = CreateCategory(instance =category)
+        return render(request, 'blog/update_category.html',{'form': form})
     else:
         messages.error(request, '수정 권한이 없습니다.')
-    return render(request, 'blog/update_category.html',{'form': form})
+        return redirect('view_posts', nickname=nickname, category_name=category_name)
 
 
 @login_required(login_url='login')
@@ -82,13 +86,12 @@ def delete_category(request,nickname,category_name):
 
 @login_required(login_url='login')
 def post_vote(request, post_id):
-    if request.user.is_authenticated:
-        post = get_object_or_404(Post, id=post_id)
-        if post.voter.filter(id=request.user.id).exists():
-            post.voter.remove(request.user)
-        else:
-            post.voter.add(request.user)
-        return redirect('detail_post',post_id=post_id)
+    post = get_object_or_404(Post, id=post_id)
+    if post.voter.filter(id=request.user.id).exists():
+        post.voter.remove(request.user)
+    else:
+        post.voter.add(request.user)
+    return redirect('detail_post',post_id=post_id)
     return redirect('accounts:login')
 
 
@@ -96,47 +99,62 @@ def view_posts(request, nickname, category_name):
     user = get_object_or_404(User, nickname=nickname)
     category = get_object_or_404(Category, name=category_name, author=user)
     post_list = Post.objects.filter(author=user, category=category)
-    return render(request, 'blog/view_posts.html', {'post_list': post_list, 'category': category})
+    return render(request, 'blog/view_posts.html', {'post_list': post_list, 'category': category, 'user': user})
 
 
 @login_required(login_url='login')
 def create_post(request):
-    if request.method == 'POST':
-        form = CreatePost(request.user, request.POST)
-        
-        if form.is_valid():
-            post = form.save(commit=False)
-            post.author = request.user
-            post.save()
-            return redirect('detail_post', post_id=post.id)
+    user = User.objects.get(nickname=request.user)
+    if request.user.nickname == user.nickname:
+        if request.method == 'POST':
+            form = CreatePost(request.user, request.POST)
+            if form.is_valid():
+                post = form.save(commit=False)
+                post.author = request.user
+                post.save()
+                return redirect('detail_post', post_id=post.id)
+        else:
+            form = CreatePost(request.user)
+        return render(request, 'blog/create_post.html', {'form': form})
     else:
-        form = CreatePost(request.user)
-    return render(request, 'blog/create_post.html', {'form': form})
+        messages.error(request, '수정 권한이 없습니다.')
+        return redirect('index')
+
 
 @login_required(login_url='login')
 def update_post(request,post_id):
     post = Post.objects.get(id=post_id)
-    if request.method == 'POST':
-        form = CreatePost(request.user, request.POST,instance=post)
-        
-        if form.is_valid():
-            post = form.save(commit=False)
-            post.author = request.user
-            post.modify_date = timezone.now()
-            post.save()
-            return redirect('detail_post', post_id=post.id)
+    if request.user.nickname == post.author.nickname:
+        if request.method == 'POST':
+            form = CreatePost(request.user, request.POST,instance=post)
+            
+            if form.is_valid():
+                post = form.save(commit=False)
+                post.author = request.user
+                post.modify_date = timezone.now()
+                post.save()
+                return redirect('detail_post', post_id=post.id)
+        else:
+            form = CreatePost(request.user,instance =post)
+            return render(request, 'blog/update_post.html',{'form': form})
     else:
-        form = CreatePost(request.user,instance =post)
-    return render(request, 'blog/update_post.html',{'form': form})
+        messages.error(request, '수정 권한이 없습니다.')
+    return redirect('detail_post',post_id = post.id)
 
 
 @login_required(login_url='login')
 def delete_post(request, post_id):
-    if request.user.is_authenticated:
-        post = get_object_or_404(Post, pk=post_id)
-        if request.user == post.author:
-            post.delete()
-    return redirect('index')
+    post = get_object_or_404(Post, pk=post_id)
+    user = post.author
+    if request.user.nickname == user.nickname:
+        if request.user.is_authenticated:
+        
+            if request.user == post.author:
+                post.delete()
+        return redirect('index')
+    else:
+        messages.error(request, '삭제 권한이 없습니다.')
+    return redirect('detail_post',post_id=post.id)
 
 
 def detail_post(request, post_id):
@@ -183,28 +201,36 @@ def create_comment(request):
 def update_comment(request,comment_id):
     comment = get_object_or_404(Comment,id=comment_id)
     post = comment.post
-    if request.method == 'POST':
-        form = CreateComment(request.POST,instance=comment)
-        
-        if form.is_valid():
-            comment = form.save(commit=False)
-            comment.author = request.user
-            comment.save()
-            return redirect('detail_post', post_id=post.id)
+    if request.user.nickname == comment.author.nickname:
+        if request.method == 'POST':
+            form = CreateComment(request.POST,instance=comment)
+            
+            if form.is_valid():
+                comment = form.save(commit=False)
+                comment.author = request.user
+                comment.modify_date = timezone.now()    
+                comment.save()
+                return redirect('detail_post', post_id=post.id)
+        else:
+            form = CreateComment(instance =comment)
+            context = {'comment':comment, 'form':form}
+        return redirect('detail_post',context)
     else:
-        form = CreateComment(instance =comment)
-    context = {'comment':comment, 'form':form}
-    return redirect('detail_post',context)
+        messages.error(request, '수정 권한이 없습니다.')
+    return redirect('detail_post',post_id=post.id)
 
 
 @login_required(login_url='login')
 def delete_comment(request,comment_id):
-    if request.user.is_authenticated:
-        comment = get_object_or_404(Comment,id=comment_id)
+    comment = get_object_or_404(Comment,id=comment_id)
+    if request.user.nickname == comment.author.nickname:    
         post = comment.post
         if request.user == comment.author:
             comment.delete()
         return redirect('detail_post',post_id=post.id)
+    else:
+         messages.error(request, '삭제 권한이 없습니다.')
+    return redirect('detail_post',post_id=post.id)
 
 
 #reply
@@ -227,12 +253,14 @@ def create_reply(request):
 
 @login_required(login_url='login')
 def delete_reply(request,reply_id):
-    if request.user.is_authenticated:
-        reply = Reply.objects.get(id=reply_id)
-        comment = reply.comment
-        post = reply.comment.post
+    reply = Reply.objects.get(id=reply_id)
+    comment = reply.comment
+    post = reply.comment.post
+    if request.user.nickname == reply.author.nickname:
         if request.user == reply.author:
             reply.delete()
+    else:
+        messages.error(request, '삭제 권한이 없습니다.')
     return redirect('detail_post',post_id=post.id)
 
 

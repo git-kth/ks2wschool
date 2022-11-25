@@ -31,10 +31,16 @@
                         <span class="text-danger small mx-2">  ({{ comment.reply_set.count }})</span>
                     {% endif %}
                     </p>
-                    <p>작성자 :{{ comment.author.nickname}} ({{ comment.create_date }})
+                    <p>작성자 :{{ comment.author.nickname}} ({{ comment.create_date }})</p>
+                    {% if messages %}
+                        {% for m in messages %}
+                            {{ m }}
+                        {% endfor %}
+                    {% endif %}
+                    {% if request.user.nickname == comment.author.nickname %}
                         <a href="{% url 'delete_comment' comment.id %}">삭제</a>
                         <a href="{% url 'update_comment' comment.id %}">수정</a>
-                    </p>
+                    {% endif %}
                     {% if comment.reply_set.all %}
                         {% for reply in comment.reply_set.all %}
                             <p>⤷⤷ {{reply.content|mark}}/  작성자: {{ reply.author.nickname}} ({{reply.create_date}})</p>

@@ -97,9 +97,17 @@ def activate(request, uidb64, token):
 
 def profile(request, nickname):
     user = get_object_or_404(User, nickname=nickname)
-    comment = user.comment_set.all()
-    # post = comment.post.all()
-    return render(request, 'account/profile.html', {'user': user,'comment':comment})
+    classification = request.GET.get('class','')
+    if classification == 'comment':
+        collection_list = user.comment_set.all()
+    elif classification == 'reply':
+        collection_list = user.reply_set.all()
+    elif classification == 'voter':
+        collection_list = user.voter_post.all()
+    else:
+        collection_list = user.voter_post.all()
+    return render(request, 'account/profile.html', {'user': user
+    ,'collection_list':collection_list,'classification':classification})
 
 @login_required(login_url='login')
 def profile_update(request, nickname):
@@ -132,48 +140,33 @@ def profile_delete(request, nickname):
 
 @login_required(login_url='login')
 def follow(request,nickname):
-    if request.user.is_authenticated:
-        user = get_object_or_404(User,nickname=nickname)
-        if user != request.user:
-            if user.followers.filter(nickname = request.user.nickname).exists():
-                user.followers.remove(request.user)
-            else:
-                user.followers.add(request.user)
-        return redirect('profile', user.nickname)
+    user = get_object_or_404(User,nickname=nickname)
+    if user != request.user:
+        if user.followers.filter(nickname = request.user.nickname).exists():
+            user.followers.remove(request.user)
+        else:
+            user.followers.add(request.user)
+    return redirect('profile', user.nickname)
 
-    return redirect('login')
 
 @login_required(login_url='login')
 def view_follow(request,nickname):
-    if request.user.is_authenticated:
-        user = get_object_or_404(User,nickname=nickname)
-        if user != request.user:
-            if user.followers.filter(nickname = request.user.nickname).exists():
-                user.followers.remove(request.user)
-            else:
-                user.followers.add(request.user)
-        sorting = request.Get.get('sort', '')
-        if sorting == 'following':
-            follow_list = user.following.all()
-        elif sorting == 'follower':
-            follow_list = user.follower.all()
-        return render(request,'account/following.html',{'user.nickname':user.nickname
-        ,'follow_list':follow_list})
-
-    return redirect('login')
+    user = get_object_or_404(User,nickname=nickname)
+   
+    if user != request.user:
+        if user.followers.filter(nickname = request.user.nickname).exists():
+            user.followers.remove(request.user)
+        else:
+            user.followers.add(request.user)
+       
+    sorting = request.GET.get('sort', '')
+    if sorting == 'following':
+        follow_list = user.followings.all()
+    elif sorting == 'follower':
+        follow_list = user.followers.all()
+    else :
+        follow_list = user.followings.all()
+    return render(request,'account/follow.html',{'user':user
+        ,'follow_list':follow_list,'sorting':sorting})
     
-#  나중에 수정 하기 뷰 하나로 합치로 get 받기
-
-
-# @login_required(login_url='login')
-# def follower(request,nickname):
-#     if request.user.is_authenticated:
-#         user = get_object_or_404(User,nickname=nickname)
-#         if user != request.user:
-#             if user.followers.filter(nickname = request.user.nickname).exists():
-#                 user.followers.remove(request.user)
-#             else:
-#                 user.followers.add(request.user)
-#         return render(request,'account/follower.html',{'user.nickname':user.nickname})
-
-#     return redirect('login')
+    

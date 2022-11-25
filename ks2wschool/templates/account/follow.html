@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}
+{% endblock %}
+
+{% block content %}
+{% if sorting == 'following' %}
+    {{user.nickname}}님이 팔로잉 하는 사람 :
+    {% for following in follow_list %}
+    <a href="{% url 'profile' following.nickname %}">{{following.nickname}}</a> 
+<br>
+{% endfor %}    
+{% endif %}
+{% if sorting == 'follower' %}
+    {{user.nickname}}님을 팔로워 하는 사람 :
+    {% for follower in follow_list %}
+    <a href="{% url 'profile' follower.nickname %}">{{follower.nickname}}</a> 
+<br>
+{% endfor %}    
+{% endif %}
+
+{% endblock %}
+
+

@@ -1,8 +1,15 @@
 {% extends 'base.html' %}
 {% block content %}
     <h4>{{ category.name }}의 게시판 입니다.</h4>
+    {% if messages %}
+        {% for m in messages %}
+            {{ m }}
+        {% endfor %}
+    {% endif %}
+    {% if request.user == user %}
     <a href="{% url 'update_category' user.nickname category.name %}"> 카테고리 수정??</a>
     <a href="{% url 'delete_category' user.nickname category.name %}"> 카테고리 삭제!!</a>
+    {% endif %}
     <hr>   
     {% if post_list %}
        {% for p in post_list %}

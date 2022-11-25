@@ -83,17 +83,36 @@
           {% endif %}
         </div>
     </div>
-    <h3>좋아요 한 글</h3>
-    {% for post in user.voter_post.all %}
-        <a href="{% url 'detail_post' post.id %}">
-            <p>{{ post.title }}</p>
-        </a>   
-    {% endfor %}
-    <h3>댓글단 글</h3>
-    {% for comment in user.comment_set.all %}
-        <a href="{% url 'detail_post' comment.post.id %}">
-            <p>{{comment.post}} </p>
-        </a>
-    {% endfor %}
+    <a href="{% url 'profile' request.user.nickname%}?class=reply">My Reply</a>
+    <a href="{% url 'profile' request.user.nickname%}?class=comment">My Comment</a>
+    <a href="{% url 'profile' request.user.nickname%}?class=voter">좋아요 글</a>
+    <hr>
+    {% if classification == 'reply' %}
+    <hr>
+        <h4>내가 단 답글 모음</h4>
+        {% for c in collection_list %}
+        {{forloop.counter}}. 
+        <a href="{% url 'detail_post' c.comment.post.id %}">{{ c }}</a>        
+        <hr>
+        {% endfor %}
+    {% endif %}
+    {% if classification == 'comment' %}
+    <h4>내가 단 댓글 모음</h4>
+    <hr>
+        {% for c in collection_list %}
+        {{forloop.counter}}.
+        <a href="{% url 'detail_post' c.post.id %}">{{ c }}</a>        
+        <hr>
+        {% endfor %}
+    {% endif %}
+    {% if classification == 'voter' %} 
+    <h4>내가 좋아요 한 글 모음</h4>
+    <hr>
+        {% for c in collection_list %}
+        {{forloop.counter}}.
+        <a href="{% url 'detail_post' c.id %}">{{ c }}</a>        
+        <hr>
+        {% endfor %}
+    {% endif %}
 </div>
 {% endblock %}
