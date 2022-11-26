@@ -140,3 +140,4 @@ def follow(request,nickname):
         return redirect('profile', user.nickname)
 
     return redirect('login')
+
