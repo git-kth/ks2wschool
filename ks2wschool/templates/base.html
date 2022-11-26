@@ -3,7 +3,7 @@
 <html>
 
 <head>
-    <link rel="stylesheet" type="text/css" href="{% static 'style.css' %}?after=23">
+    <link rel="stylesheet" type="text/css" href="{% static 'style.css' %}?after=43">
     {% block style %}{% endblock %}
     <script src="https://code.jquery.com/jquery-latest.min.js" type="text/javascript"></script>
     <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
@@ -21,8 +21,6 @@
                 <a href="{% url 'index' %}"><img class="home-logo" src="/static/images/logo.png" alt="로고"
                         width="90"></a>
             </div>
-
-
             <input type="text" id="user-search-list" class="user-search" placeholder="유저이름을 입력하세요.">
            
 
@@ -87,6 +85,8 @@
                         </div>
                         {% endfor %}
                     {% endif %}
+                </div>
+            </div>
         <div id="main">
             <div id="content">
                 {% block content %}
@@ -155,10 +155,6 @@
             });
         });
         
-            
-
-
-
         $('.menu-btn').click(function () {
             $('#side-bar').animate({ width: "toggle" }, 600);
         });
@@ -216,7 +212,7 @@
                 }
             }
         });
-    </script>    
+    </script>
 </body>
 
 </html>
