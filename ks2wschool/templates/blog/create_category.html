@@ -4,21 +4,15 @@
 <div>
     <h5>카테고리 생성</h5>
     <form method="post">
+        {% if messages %}
+            {% for message in messages %}
+                {{ message }}
+            {% endfor %}
+        {% endif %}
         {% csrf_token %}
         <!-- 오류표시 Start -->
-        {% if form.errors %}
-        <div class="alert alert-danger" role="alert">
-            {% for field in form %}
-            {% if field.errors %}
-            <div>
-                <strong>{{ field.label }}</strong>
-                {{ field.errors }}
-            </div>
-            {% endif %}
-            {% endfor %}
-        </div>
-        {% endif %}
-        {{ form.as_p }}
+        <input type="text" name="name" maxlength="200" required="" id="id_name">
+        <input type="hidden" name="author" id="id_author" value="{{ request.user.id }}">
         <!-- 오류표시 End -->
         <button type="submit" class="btn btn-primary">저장하기</button>
     </form>

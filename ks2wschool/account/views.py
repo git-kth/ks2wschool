@@ -18,40 +18,40 @@ from .tokens import account_activation_token
 # Create your views here.
 
 def login(request):
-    if request.user.is_authenticated:
-        if request.GET.get('next'):
-            return resolve_url(request.GET['next'])
-        else:
-            return redirect('index')
     if request.method == 'POST':
         form = LoginUserForm(request.POST)
+        next = request.POST.get('next')
         if form.is_valid():
             email = form.cleaned_data.get('email')
             password = form.cleaned_data.get('password')
-            user = User.objects.get(email=email)
             # request.session['user'] = form.user_id                 
-            if user.is_active:
-                user = auth.authenticate(email=email, password=password)
-                auth.login(request, user)
-                return redirect('index')
+            user = auth.authenticate(email=email, password=password)
+            if user.is_authenticated:  
+                if user.is_active:
+                    auth.login(request, user)
+                    if request.POST.get('next'):
+                        return redirect(request.POST['next'])
+                    else:
+                        return redirect('index')
+                else:
+                    current_site = get_current_site(request) 
+                    message = render_to_string('account/activation_email.html', {
+                    'user': user,
+                    'domain': current_site.domain,
+                    'uid': urlsafe_base64_encode(force_bytes(user.pk)),
+                    'token': account_activation_token.make_token(user),
+                    })
+                    mail_title = user.nickname + "님의 계정 활성화"
+                    mail_to = email
+                    mail = EmailMessage(mail_title, message, to=[mail_to])
+                    mail.send()
+                    return render(request, 'account/activation_info.html', {'email': email})
             else:
-                current_site = get_current_site(request) 
-                message = render_to_string('account/activation_email.html', {
-                'user': user,
-                'domain': current_site.domain,
-                'uid': urlsafe_base64_encode(force_bytes(user.pk)),
-                'token': account_activation_token.make_token(user),
-                })
-                mail_title = user.nickname + "님의 계정 활성화"
-                mail_to = email
-                mail = EmailMessage(mail_title, message, to=[mail_to])
-                mail.send()
-                return render(request, 'account/activation_info.html', {'email': email})
-                
-                # form.add_error('email', '계정을 활성화해주세요')            
+                messages.error(request, '아이디 또는 비밀번호가 틀렸습니다.')
     else:
         form = LoginUserForm()
-    return render(request, 'account/login.html', {'form': form})
+        next = request.GET.get('next')
+    return render(request, 'account/login.html', {'form': form , 'next': next})
     
 
 def signup(request):
@@ -97,7 +97,16 @@ def activate(request, uidb64, token):
 
 def profile(request, nickname):
     user = get_object_or_404(User, nickname=nickname)
-    return render(request, 'account/profile.html', {'user': user})
+    classification = request.GET.get('class','voter')
+    if classification == 'comment':
+        collection_list = user.comment_set.all()
+    elif classification == 'reply':
+        collection_list = user.reply_set.all()
+    elif classification == 'voter':
+        collection_list = user.voter_post.all()
+    else:
+        collection_list = user.voter_post.all()
+    return render(request, 'account/profile.html', {'author': user ,'collection_list':collection_list,'classification':classification})
 
 @login_required(login_url='login')
 def profile_update(request, nickname):
@@ -130,14 +139,29 @@ def profile_delete(request, nickname):
 
 @login_required(login_url='login')
 def follow(request,nickname):
-    if request.user.is_authenticated:
-        user = get_object_or_404(User,nickname=nickname)
-        if user != request.user:
-            if user.followers.filter(nickname = request.user.nickname).exists():
-                user.followers.remove(request.user)
-            else:
-                user.followers.add(request.user)
-        return redirect('profile', user.nickname)
+    user = get_object_or_404(User,nickname=nickname)
+    if user != request.user:
+        if user.followers.filter(nickname = request.user.nickname).exists():
+            user.followers.remove(request.user)
+        else:
+            user.followers.add(request.user)
+    
+    return redirect('profile', user.nickname)
 
-    return redirect('login')
+@login_required(login_url='login')
+def view_follow(request,nickname):
+    user = get_object_or_404(User,nickname=nickname)
+    following = user.followings.all()
+    follower = user.followers.all()
+    sorting = request.GET.get('sort', '')
+
+    if sorting == 'following':
+        follow_list = following
+    elif sorting == 'follower':
+        follow_list = follower
+    else :
+        follow_list = a
+    return render(request,'account/follow.html',{'user':user
+        ,'follow_list':follow_list,'sorting':sorting})
+    
 

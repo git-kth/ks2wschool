@@ -2,7 +2,7 @@
 {% load static %}
 {% block title %}
 <link rel="stylesheet" type="text/css" href="{% static 'profile.css' %}?after=16">
-<title>{{ user }} 프로필</title>
+<title>{{ author }} 프로필</title>
 {% endblock %}
 {% block content %}
 <div class="profile_class">
@@ -13,8 +13,8 @@
                     <!-- 여기에 src를 수정해줘야함 -->
                     <!-- 정보수정 페이지에서 이미지를 넣어도 이미 이미지가 고정적으로
                         들어가있어서 바뀌지 않음 -->
-                    {% if user.profile_image %}
-                    <img class="profile_basic_image" width="128" height="128" src="{{ user.profile_image.url }}"
+                    {% if author.profile_image %}
+                    <img class="profile_basic_image" width="128" height="128" src="{{ author.profile_image.url }}"
                         alt="프로필">
                     {% else %}
                     <img class="profile_basic_image" width="128" height="128"
@@ -22,12 +22,15 @@
                     {% endif %}
                 </div>
                 <div class="h_profile">
-                    <h1>{{ user }}님의 프로필</h1>
+                    <h1>{{ author }}님의 프로필</h1>
                 </div>
             </div>
             <div>
-                {% if request.user == user %}
-                <a href="{% url 'profile_update' user.nickname %}" class="account_update">계정 수정</a>
+                <a href="{% url 'post_list' author.nickname %}">post_list</a>
+            </div>
+            <div>
+                {% if request.user == author %}
+                <a href="{% url 'profile_update' request.user.nickname %}" class="account_update">계정 수정</a>
                 {% endif %}
             </div>
         </div>
@@ -37,41 +40,43 @@
             <div class="profile_introduction">
                 <fieldset class="field_box">
                     <legend class="my_introduction">자기 소개</legend>
-                    {{ user.short_info }}
+                    {{ author.short_info }}
                 </fieldset>
             </div>
         </div>
         <hr>
         <div class="profile_name">
-            <p><b>이름 :</b> {{ user.name }}</p>
+            <p><b>이름 :</b> {{ author.name }}</p>
         </div>
         <hr>
         <div class="profile_email">
-            <p><b>이메일 : </b> {{ user.email }}</p>
+            <p><b>이메일 : </b> {{ author.email }}</p>
         </div>
         <hr>
         <div class="profile_nickname">
-            <p><b>닉네임 : </b>{{ user.nickname }}</p>
+            <p><b>닉네임 : </b>{{ author.nickname }}</p>
         </div>
         <hr>
         <div class="profile_birthdate">
-            <p><b>생년 월일 : </b>{{ user.birth_date }}</p>
+            <p><b>생년 월일 : </b>{{ author.birth_date }}</p>
         </div>
         <hr>
         <div class="profile_account_build">
-            <p><b>계정 생성 날짜 : </b>{{ user.created_at }}</p>
+            <p><b>계정 생성 날짜 : </b>{{ author.created_at }}</p>
         </div>
         <hr>
         <div>
             <div>
-                팔로잉 : {{ user.followings.all|length }} / 팔로워 : {{ user.followers.all|length }}
+                <a href="{% url 'view_follow' author.nickname %}?sort=following">팔로잉</a>  : {{ author.followings.all|length }} 
+                / <a href="{% url 'view_follow' author.nickname %}?sort=follower">팔로워</a>  : {{ author.followers.all|length }}
+                <hr>
             </div>
           
-            {% if request.user != user %}
+            {% if request.user != author %}
             <div>
-              <form action="{% url 'follow' user.nickname %}" method='POST'>
+              <form action="{% url 'follow' author.nickname %}" method='POST'>
                 {% csrf_token %}
-                {% if request.user in user.followers.all %}
+                {% if request.user in author.followers.all %}
                   <input type="submit" value='팔로우 취소'>
                 {% else %}
                   <input type="submit" value='팔로우'>
@@ -81,6 +86,36 @@
           {% endif %}
         </div>
     </div>
-
+    <a href="{% url 'profile' author.nickname%}?class=voter">좋아요</a>
+    <a href="{% url 'profile' author.nickname%}?class=comment">댓글</a>
+    <a href="{% url 'profile' author.nickname%}?class=reply">답글</a>
+    <hr>
+    {% if classification == 'reply' %}
+    <hr>
+        <h4>답글 모음</h4>
+        {% for c in collection_list %}
+        {{forloop.counter}}. 
+        <a href="{% url 'detail_post' c.comment.post.id %}">{{ c }}</a>        
+        <hr>
+        {% endfor %}
+    {% endif %}
+    {% if classification == 'comment' %}
+    <h4>댓글 모음</h4>
+    <hr>
+        {% for c in collection_list %}
+        {{forloop.counter}}.
+        <a href="{% url 'detail_post' c.post.id %}">{{ c }}</a>        
+        <hr>
+        {% endfor %}
+    {% endif %}
+    {% if classification == 'voter' %} 
+    <h4>좋아요 한 글 모음</h4>
+    <hr>
+        {% for c in collection_list %}
+        {{forloop.counter}}.
+        <a href="{% url 'detail_post' c.id %}">{{ c }}</a>        
+        <hr>
+        {% endfor %}
+    {% endif %}
 </div>
 {% endblock %}

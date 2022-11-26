@@ -3,39 +3,42 @@
 <html>
 
 <head>
-    <link rel="stylesheet" type="text/css" href="{% static 'style.css' %}?after=41">
+
+    <link rel="stylesheet" type="text/css" href="{% static 'style.css' %}?after=55">
     {% block style %}{% endblock %}
     <script src="https://code.jquery.com/jquery-latest.min.js" type="text/javascript"></script>
     <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
-    <link rel="stylesheet" href="/resources/demos/style.css" />
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/cupertino/jquery-ui.css">
     {% block title %}{% endblock %}
 </head>
 
 <body>
     <div id="wrap">
         <div id="header-bar">
-
+            <div class="menu-btn">
+                <img alt="메뉴" width="30px" src="{% static 'images/menu.png' %}">
+            </div>
             <div>
                 <a href="{% url 'index' %}"><img class="home-logo" src="/static/images/logo.png" alt="로고"
                         width="90"></a>
             </div>
 
 
-            <input type="text" class="user-search" placeholder="유저이름을 입력하세요.">
-            <div class="user-search-list">
+            <input type="text" id="user-search-list" class="user-search" placeholder="유저이름을 입력하세요.">
+           
 
-            </div>
             <div class="user-box">
-                {% if user.is_authenticated %}
+                {% if request.user.is_authenticated %}
                 <div class="profile-image">
-                    {% if user.profile_image %}
-                    <img width="90" height="90" src="{{ user.profile_image.url }}" alt="프로필">
+                    {% if request.user.profile_image %}
+                    <img width="90" height="90" src="{{ request.user.profile_image.url }}" alt="프로필">
                     {% else %}
                     <img width="90" height="90" src="{% static 'images/basic_profile.png' %}" alt="프로필">
                     {% endif %}
                 </div>
                 <div class="profile-info">
-                    <a class="loginout-btn" style="margin-bottom: 5px;" href="{% url 'profile' user.nickname %}">MY
+                    <a class="loginout-btn" style="margin-bottom: 5px;"
+                        href="{% url 'profile' request.user.nickname %}">MY
                         INFO</a>
                     <a class="loginout-btn" href="{% url 'logout' %}">LOGOUT</a>
                 </div>
@@ -43,27 +46,115 @@
                 <div class="profile-info">
                     <a class="loginout-btn" style="margin-bottom: 5px;"
                         href="{% url 'login' %}?next={{ request.path }}">LOGIN</a>
-                    <a class="loginout-btn" href="{% url 'logout' %}">LOGOUT</a>
+                    <a class="loginout-btn" href="{% url 'signup' %}">SIGN UP</a>
                 </div>
                 {% endif %}
             </div>
         </div>
         <div id="side-bar">
+            <div class="menu-btn" style="margin-left: 85%">
+                <img alt="메뉴" width="30px" src="{% static 'images/menu.png' %}">
+            </div>
+            <h2 style="text-align:center; margin-top:25px;">
+                {% if author %}
+                {{ author }}님의 카테고리
+                {% else %}
+                {% if request.user.is_authenticated %}
+                {{ request.user }}님의 카테고리
+                {% else %}
+                로그인을 해주세요
+                {% endif %}
+                {% endif %}
+            </h2>
+            <div class="side-bar-list">
+                {% if author %}
+                {% for category in author.category_set.all %}
+                <div class="side-bar-content"><a href="{% url 'view_posts' author category %}">{{ category }}
+                    </a>&nbsp;<span style="font-size:14px;color:rgb(195, 37, 37);">({{ category.post_set.count}})</span>
+                </div>
+                {% endfor %}
+                {% elif request.user.is_authenticated %}
+                {% for category in request.user.category_set.all %}
+                <div class="side-bar-content"><a href="{% url 'view_posts' request.user category %}">{{ category}}
+                    </a><span style="font-size:14px;color:rgb(195, 37, 37);">({{ category.post_set.count}})</span></div>
+                {% endfor %}
+                {% endif %}
+            </div>
+        </div>
+        <!-- <div id="side-bar">
             <a href="{% url 'create_category' %}">카테고리 생성</a>
-            {% if user.is_authenticated %}
+            {% if request.user.is_authenticated %}
             <p>카테고리</p>
             {% for category in user.category_set.all %}
             <a href="{% url 'view_posts' user.nickname category.name %}">{{ category }}</a>
 
             {% endfor %}
             {% endif %}
-        </div>
+        </div> -->
         <div id="main">
-            {% block content %}
-            {% endblock %}
+            <div id="content">
+                {% block content %}
+                {% endblock %}
+            </div>
         </div>
     </div>
+
     <script>
+        $(function() {
+            //alert(1);
+            $("#user-search-list").autocomplete({
+                source: function(request, response) {
+                    $.ajax({
+                url: "{% url 'user_search' %}",
+                type: "get",
+                data: {
+                    'search_val': $("#user-search-list").val()
+                },
+                datatype: 'json',
+                success: function (data) {
+                    response(
+                        $.map(data, function(item) {
+                            
+                            return {
+                                label: item,
+                                value: item,
+                                test: item+"test"
+                            }
+                        })
+                    );
+                    
+                }
+            });
+          },
+          select : function(event, ui) {    //아이템 선택시
+                location.replace("/account/" + ui.item.value)
+          },       
+          focus : function(event, ui) {  
+              return false;  //한글 에러 잡기용도로 사용
+          },
+          minLength: 1, // 최소 글자수
+          autoFocus: true, 
+          classes: {    
+              "ui-autocomplete": "highlight"
+          },
+          delay: 500, 
+          position: { my : "right top", at: "right bottom" },   
+          close : function(event){   
+              console.log(event);
+          }
+            });
+        });
+        
+            
+
+
+
+        $('.menu-btn').click(function () {
+            $('#side-bar').animate({ width: "toggle" }, 600);
+        });
+    </script>
+    
+    <!-- <script>
         $('.user-search').on('keyup', function () {
             $.ajax({
                 url: "{% url 'user_search' %}",
@@ -82,17 +173,11 @@
                 }
             });
         });
-    </script>
-    <!-- <header>
-            <div class="header">
-                <img src="" alt="">
-                <a href="{% url 'index' %}">Home</a>
-                
-                <input type="search">
-                <a href="{% url 'login' %}">Login</a>
-            </div>
-        </header> -->
-
+        
+        $('.menu-btn').click(function () {
+            $('#side-bar').animate({ width: "toggle" }, 600);
+        });
+    </script> -->
 
 
 
