@@ -1,4 +1,5 @@
 from datetime import date, datetime, timedelta
+import json
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
@@ -29,21 +30,21 @@ def index(request):
     context = {'post_list': page_obj}
     return render(request, 'blog/index.html', context)
 
-@login_required(login_url='login')
-def create_category(request):
-    if request.method == 'POST':
-        form = CreateCategory(request.POST)
-        if form.is_valid():
-            if Category.objects.filter(name=form.cleaned_data['name'], author=request.user).count() > 0:
-                messages.error(request, '이미 카테고리가 있습니다.')
-            else:
-                category = form.save(commit=False)
-                category.author = request.user
-                category.save()
-                return redirect('index')
-    else:
-        form = CreateCategory()
-    return render(request, 'blog/create_category.html',{'form': form})
+# @login_required(login_url='login')
+# def create_category(request):
+#     if request.method == 'POST':
+#         form = CreateCategory(request.POST)
+#         if form.is_valid():
+#             if Category.objects.filter(name=form.cleaned_data['name'], author=request.user).count() > 0:
+#                 messages.error(request, '이미 카테고리가 있습니다.')
+#             else:
+#                 category = form.save(commit=False)
+#                 category.author = request.user
+#                 category.save()
+#                 return redirect('index')
+#     else:
+#         form = CreateCategory()
+#     return render(request, 'blog/create_category.html',{'form': form})
         
 
 
@@ -288,3 +289,22 @@ def user_search(request):
         ).distinct()
     user_list = [user.nickname for user in user_list]
     return JsonResponse({"user_list" : user_list})
+
+@login_required(login_url='login')
+def create_category(request):
+    if request.method == 'POST':
+        form = CreateCategory(request.POST)
+        if form.is_valid():
+            if Category.objects.filter(name=form.cleaned_data['name'], author=request.user).count() > 0:
+                err = {"error": '이미 카테고리가 있습니다.'}
+            else:
+                category = form.save(commit=False)
+                category.author = request.user
+                category.save()
+                return JsonResponse({"flag": True})
+        else:
+            err = {"error": '입력값이 없습니다.'}
+    else:
+        err = {"error": '제한된 접근입니다.'}
+    err.update({"flag": False})
+    return JsonResponse(err)
