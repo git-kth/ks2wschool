@@ -148,7 +148,6 @@ def follow(request,nickname):
     
     return redirect('profile', user.nickname)
 
-
 @login_required(login_url='login')
 def view_follow(request,nickname):
     user = get_object_or_404(User,nickname=nickname)
@@ -165,4 +164,4 @@ def view_follow(request,nickname):
     return render(request,'account/follow.html',{'user':user
         ,'follow_list':follow_list,'sorting':sorting})
     
-    
+

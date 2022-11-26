@@ -5,6 +5,7 @@ urlpatterns = [
     path('', views.index, name='index'),
     path('user_search/', views.user_search, name='user_search'),
     path('summernote/', include('django_summernote.urls')),
+
 ]
 
 # category

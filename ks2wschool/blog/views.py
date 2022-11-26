@@ -12,6 +12,7 @@ from account.models import User
 from blog.models import *
 from blog.forms import CreateCategory, CreatePost, CreateComment, CreateReply
 from blog.models import *
+
 # Create your views here.
 
 def index(request):
@@ -28,25 +29,7 @@ def index(request):
     paginator = Paginator(post_list, 10)
     page_obj = paginator.get_page(page)
     context = {'post_list': page_obj}
-    return render(request, 'blog/index.html', context)
-
-# @login_required(login_url='login')
-# def create_category(request):
-#     if request.method == 'POST':
-#         form = CreateCategory(request.POST)
-#         if form.is_valid():
-#             if Category.objects.filter(name=form.cleaned_data['name'], author=request.user).count() > 0:
-#                 messages.error(request, '이미 카테고리가 있습니다.')
-#             else:
-#                 category = form.save(commit=False)
-#                 category.author = request.user
-#                 category.save()
-#                 return redirect('index')
-#     else:
-#         form = CreateCategory()
-#     return render(request, 'blog/create_category.html',{'form': form})
-        
-
+    return render(request, 'blog/index.html', context) 
 
 @login_required(login_url='login')
 def update_category(request,nickname,category_name):
@@ -279,9 +262,9 @@ def delete_reply(request,reply_id):
         messages.error(request, '삭제 권한이 없습니다.')
     return redirect('detail_post',post_id=post.id)
 
-
 def user_search(request):
     search_val = request.GET.get('search_val')
+    print(search_val)
     user_list = User.objects.all()
     if search_val:
         user_list = user_list.filter(
