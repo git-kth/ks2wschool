@@ -2,7 +2,7 @@
 {% load filter %}
 {% load static %}
 {% block content %}
-<link rel='stylesheet' href="{% static 'detail_post.css' %}?after=150 ">
+<link rel='stylesheet' href="{% static 'detail_post.css' %}?after=231 ">
 
     <div id="post_head">
         <span class="s_post_head">zzz{{ post.category }}</span>    
@@ -46,12 +46,16 @@
                     <div id="post_reply_writer"><span class="s_post_reply_writer" >{{comment.author.nickname}}</span>  </div>
                     <div id="post_reply"> <span class="s_post_reply">{{comment.content}} </span> </div>
                     <div id="post_date"><span class="s_post_date"> {{ comment.create_date }}</span> </div>                                                 
-                        {% if comment.reply_set.count > 0 %}
-                        <span class="text-danger small mx-2">  ({{ comment.reply_set.count }})</span>
-                    {% endif %}
-                    <button class="s_post_reply_again" ><a href="{% url 'update_comment' comment.id %}">수정</a></button>
-                    <button class="s_post_reply_delete"><a href="{% url 'delete_comment' comment.id %}">삭제</a></button>
+                        
+                    <div class="post_button">
+                        <button class="s_post_reply_again" ><a href="{% url 'update_comment' comment.id %}">수정</a></button>
+                        <button class="s_post_reply_delete"><a href="{% url 'delete_comment' comment.id %}">삭제</a></button>
+                    </div>
                     
+
+                    <div class="post_count">  <span class="s_post_count"> 댓글개수 ({{ comment.reply_set.count }})</span></div>
+                   
+
                     {% if comment.reply_set.all %}
                         {% for reply in comment.reply_set.all %}
                             <div id="post_reply_again">⤷⤷  {{ reply.author.nickname}} :{{reply.content}} ({{reply.create_date}})   </div>
@@ -60,8 +64,9 @@
                     {% else %}
                         <div id="post_another_reply">Nodata</div>
                     {% endif %}
-                    <div action="{% url 'create_reply' %}?comment_id={{ comment.id }}" method = "post">
+                    <form action="{% url 'create_reply' %}?comment_id={{ comment.id }}" method = "post">
                         {% csrf_token %}
+                        
                     {% for field in reply_form %}
                         {{ field.errors }}
                         <div id="mb"><label for="{{ field.id_for_label }}">{{ field.label }}:</label></div>
@@ -86,5 +91,6 @@
             <input type="submit" value="답글">    
         </form>
         </div>     
-        
+
 {% endblock %}
+

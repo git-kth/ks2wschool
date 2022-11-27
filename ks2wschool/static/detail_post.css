@@ -106,11 +106,19 @@ margin: 10px 0 0 30px;
 font-size: 1.1vh;
 
 }
-.s_post_reply_again{
-    float: left;
-    margin: 10px 10px 0 30px;
+.post_button > *{
+    float: left;    
+    margin: 10px 0 10px 30px;
 }
-.s_post_reply_delete{
-    float:left;
-    margin: 10px 0 0 0px;
+
+.post_button::after{
+    content:"";
+    display:block;
+    clear:both;
+}
+
+.post_count{
+    text-align: start;
+    margin: 0 0 0 30px;
+
 }
