@@ -24,8 +24,8 @@
         <a href="{% url 'post_vote' post.id %}">
             <button class ="s_post_good">추천 {{post.voter.count}} 💗</button>
             {% if user.is_authenticated %}  
-            <button class="s_content_delete"> <a href="{% url 'delete_post' post.id %}">삭제</a></button>
-            <button  class="s_content_again"> <a href="{% url 'update_post' post.id %}">수정</a></button>
+            <button class="s_content_delete"> <a href="{% url 'blog_delete' post.id %}">삭제</a></button>
+            <button  class="s_content_again"> <a href="{% url 'blog_update' post.id %}">수정</a></button>
             
         </a>
 
@@ -55,6 +55,7 @@
 
                     <div class="post_count">  <span class="s_post_count"> 댓글개수 ({{ comment.reply_set.count }})</span></div>
                    
+
 
                     {% if comment.reply_set.all %}
                         {% for reply in comment.reply_set.all %}

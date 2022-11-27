@@ -11,7 +11,7 @@ class Post(models.Model):
     modify_date = models.DateTimeField(null=True, blank=True)
     # hits = models.PositiveIntegerField(default=0)
     category = models.ForeignKey("Category", on_delete=models.CASCADE)
-    author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='author_question')
+    author = models.ForeignKey(User, on_delete=models.CASCADE)
     voter = models.ManyToManyField(User, blank=True, related_name='voter_post')
     hits = models.PositiveBigIntegerField(default=1, verbose_name='조회수')
 
