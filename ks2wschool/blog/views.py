@@ -158,10 +158,8 @@ def post_list(request, nickname):
 
 def detail_post(request, post_id):
     post = get_object_or_404(Post, pk=post_id)
-    comment_form = CreateComment()
-    reply_form = CreateReply()
     
-    response = render(request, 'blog/detail_post.html', {'post': post, 'comment_form': comment_form, 'reply_form': reply_form, 'author': post.author})
+    response = render(request, 'blog/detail_post.html', {'post': post})
     # 조회수 기능은 쿠키를 이용하는데 쿠키에 열람한 게시글에 관한 데이터를 넣음
     # 쿠키는 만료기간을 조절하는 것으로 조회수 증가 기준을 정함
     expire_date, now = datetime.now(), datetime.now()

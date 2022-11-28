@@ -2,96 +2,78 @@
 {% load filter %}
 {% load static %}
 {% block content %}
-<link rel='stylesheet' href="{% static 'detail_post.css' %}?after=231 ">
-
+    <link rel='stylesheet' href="{% static 'detail_post.css' %}?after=1320 ">
     <div id="post_head">
         <span class="s_post_head">{{ post.category }}</span>    
     </div>
     <hr>
     <div id="post_main">
-        
         <div id="post_writer"><span class="s_post_writer">👧🏻 {{ post.author }}</span></div>
         <div class="hits">
             <span class="s_hits">조회수 : {{post.hits}}</span> </div>
         <div id="post_title"><span class="s_post_title"> {{ post.title }}</></div>
         <hr/>
-
         <div id="content">{{ post.content|mark }}</div>
-   
     </div>
 
     <div id="post_good">
         <a href="{% url 'post_vote' post.id %}">
             <button class ="s_post_good">추천 {{post.voter.count}} 💗</button>
-            {% if user.is_authenticated %}  
-            <button class="s_content_delete"> <a href="{% url 'blog_delete' post.id %}">삭제</a></button>
-            <button  class="s_content_again"> <a href="{% url 'blog_update' post.id %}">수정</a></button>
-            
+            {% if post.author == request.user %}  
+                <button class="s_content_delete"> <a href="{% url 'blog_delete' post.id %}">삭제</a></button>
+                <button class="s_content_again"> <a href="{% url 'blog_update' post.id %}">수정</a></button>
+            {% endif %}
         </a>
+    </div>
+    <div class="comment-list">
+        {% for comment in post.comment_set.all %}
+            <div id="comment{{ comment.id }}">
+                <div class="post-comment-author">- {{comment.author.nickname}}</div>
+                <div class="post-comment-content comment-{{comment.id}}">
+                    {{comment.content}}
+                </div>
+                <form action="{% url 'update_comment' comment.id %}" method="post" class="update-comment form-{{comment.id}} hide">
+                    {% csrf_token %}
+                    <textarea name="content" id="content-{{comment.id}}" class="update-comment-area" cols="30" rows="10">{{comment}}</textarea>
+                    <input class="update_comment_btn" style="margin-left:20px;" type="submit" value="수정하기">
+                </form>
+                <div class="post-comment-createdate">
+                    {{ comment.create_date }}
+                </div>
+            {% if comment.author == request.user %}    
+                <div class="post_button">
+                    <button class="update_comment_btn" data-comment="{{comment.id}}">수정</button>
+                    <button class="delete_comment_btn" data-url="{% url 'delete_comment' comment.id %}">삭제</button>
+                </div>
+            {% endif %}
+            
+            <div class="post_count"><span class="s_post_count">답글개수 ({{ comment.reply_set.count }})</span></div>
+        </div>
+        {% endfor %}
+    </div> 
+{% endblock %}
 
-      </div>  
-      
-
-  
-    {% endif %}
+{% block script %}
+<script>
+    $('.update_comment_btn').click(function(){
+        if(this.innerHTML == '수정'){
+            this.innerHTML = '취소';
+            $('.comment-' + this.dataset.comment).addClass('hide');
+            $('.form-' + this.dataset.comment).removeClass('hide');
+            // $('.form-1')
+        }else{
+            this.innerHTML = '수정';
+            $('.comment-' + this.dataset.comment).removeClass('hide');
+            $('.form-' + this.dataset.comment).addClass('hide');
+        }
         
-     
-        
-        
-      
+    });
 
-        {% if post.comment_set.count > 0 %}
-            {% for comment in post.comment_set.all %}
-                
-                    <div id="post_reply_writer"><span class="s_post_reply_writer" >{{comment.author.nickname}}</span>  </div>
-                    <div id="post_reply"> <span class="s_post_reply">{{comment.content}} </span> </div>
-                    <div id="post_date"><span class="s_post_date"> {{ comment.create_date }}</span> </div>                                                 
-                        
-                    <div class="post_button">
-                        <button class="s_post_reply_again" ><a href="{% url 'update_comment' comment.id %}">수정</a></button>
-                        <button class="s_post_reply_delete"><a href="{% url 'delete_comment' comment.id %}">삭제</a></button>
-                    </div>
-                    
-
-                    <div class="post_count">  <span class="s_post_count"> 댓글개수 ({{ comment.reply_set.count }})</span></div>
-                   
-
-
-                    {% if comment.reply_set.all %}
-                        {% for reply in comment.reply_set.all %}
-                            <div id="post_reply_again">⤷⤷  {{ reply.author.nickname}} :{{reply.content}} ({{reply.create_date}})   </div>
-                           <button id="post_delete"> <a href="{% url 'delete_reply' reply.id %}">삭제</a></button>
-                        {% endfor %}
-                    {% else %}
-                        <div id="post_another_reply">Nodata</div>
-                    {% endif %}
-                    <form action="{% url 'create_reply' %}?comment_id={{ comment.id }}" method = "post">
-                        {% csrf_token %}
-                        
-                    {% for field in reply_form %}
-                        {{ field.errors }}
-                        <div id="mb"><label for="{{ field.id_for_label }}">{{ field.label }}:</label></div>
-                        {{ field }}
-                        {% endfor %}
-                        <input type="submit" value="답글">
-                        </form>    
-                    <hr>
-                    
-         
-            {% endfor %}
-        {% else %}
-            <div id="post_nodata">No data</div>
-        {% endif %}
-        <form action="{% url 'create_comment' %}?post_id={{ post.id }}" method = "post">
-            {% csrf_token %}
-            {% for field in comment_form %}
-                {{ field.errors }}
-                <label for="{{ field.id_for_label }}">{{ field.label }}:</label>
-                {{ field }}
-            {% endfor %}
-            <input type="submit" value="답글">    
-        </form>
-        </div>     
-
+    $('.delete_comment_btn').click(function(){
+        if(confirm("정말로 삭제하시겠습니까?")){
+            location.href = this.dataset.url;
+        }
+    });
+</script>
 {% endblock %}
 
