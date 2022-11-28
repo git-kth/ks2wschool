@@ -3,7 +3,7 @@
 <html>
 
 <head>
-    <link rel="stylesheet" type="text/css" href="{% static 'style.css' %}?after=43">
+    <link rel="stylesheet" type="text/css" href="{% static 'style.css' %}?after=50">
     {% block style %}{% endblock %}
     <script src="https://code.jquery.com/jquery-latest.min.js" type="text/javascript"></script>
     <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
@@ -212,6 +212,8 @@
             }
         });
     </script>
+    {% block script %}
+    {% endblock %}
 </body>
 
 </html>
