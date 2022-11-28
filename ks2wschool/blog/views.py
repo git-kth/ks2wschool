@@ -7,6 +7,7 @@ from django.db.models import Q, Count
 from django.http import JsonResponse
 from django.core.paginator import Paginator
 from django.db.models import Count
+from django.core import serializers
 
 from account.models import User
 from blog.models import *
@@ -290,3 +291,11 @@ def create_category(request):
         err = {"error": '제한된 접근입니다.'}
     err.update({"flag": False})
     return JsonResponse(err)
+
+def view_reply(request):
+    comment_id = request.GET.get('comment_id')
+    comment = get_object_or_404(Comment, pk=comment_id)
+    reply_list = comment.reply_set.all()
+    data = {'reply': [{'id': reply.id, 'content': reply.content, 'author': reply.author.nickname, 'create_date': reply.create_date, 'modify_date': reply.modify_date} for reply in reply_list]}
+    data.update({'comment': {'content': comment.content, 'author': comment.author.nickname, 'create_date': comment.create_date, 'modify_date': comment.modify_date}})
+    return JsonResponse(data)

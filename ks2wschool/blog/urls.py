@@ -33,5 +33,6 @@ urlpatterns += [
     path('delete_comment/<int:comment_id>',views.delete_comment, name="delete_comment"),
     path('create_reply/', views.create_reply, name="create_reply"),
     path('delete_reply/<int:reply_id>',views.delete_reply,name="delete_reply"),
+    path('view_reply/', views.view_reply, name='view_reply'),
 ]
 

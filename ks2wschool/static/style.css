@@ -22,7 +22,7 @@ body {
 
 #header-bar,
 #main {
-   
+    min-width: 1024px;
     box-shadow: 8px 10px 8px -2px gray;
 }
 
@@ -203,7 +203,7 @@ body {
     color: gainsboro;
 }
 
-#popup-layer{
+#reply-popup-layer, #popup-layer{
     display: none;
     position: fixed;
     top:0;
@@ -233,6 +233,7 @@ body {
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    overflow: auto;
 }
 
 .popup-content{
@@ -256,4 +257,20 @@ body {
     top: 9px;
     cursor:pointer;
     box-shadow: 1px 1px 1px 0px rgba(0,0,0,0.35);
+}
+
+.reply-comment{
+    width: 400px;
+    height: 100px;
+    border: 2px dashed black;
+}
+
+.reply-comment > h2{
+    text-align: center;
+}
+
+.reply-comment-author{
+    font-size: 15px;
+    text-align: right;
+    margin: 0 15px 0 0;
 }
