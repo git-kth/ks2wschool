@@ -34,7 +34,7 @@
                 </div>
                 <form action="{% url 'update_comment' comment.id %}" method="post" class="update-comment form-{{comment.id}} hide">
                     {% csrf_token %}
-                    <textarea name="content" id="content-{{comment.id}}" class="update-comment-area" cols="30" rows="10">{{comment}}</textarea>
+                    <textarea name="content" id="content-{{comment.id}}" class="update-comment-area">{{comment}}</textarea>
                     <input class="update_comment_btn" style="margin-left:20px;" type="submit" value="수정하기">
                 </form>
                 <div class="post-comment-createdate">
@@ -50,6 +50,11 @@
             <div class="post_count"><span class="s_post_count">답글개수 ({{ comment.reply_set.count }})</span></div>
         </div>
         {% endfor %}
+        <form action="{% url 'create_comment' %}?post_id={{post.id}}" method="post" class="update-comment">
+            {% csrf_token %}
+            <textarea name="content" class="update-comment-area"></textarea>
+            <input class="update_comment_btn" style="margin-left:20px;" type="submit" value="댓글쓰기">
+        </form>
     </div> 
 {% endblock %}
 

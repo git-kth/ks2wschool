@@ -181,6 +181,7 @@ def detail_post(request, post_id):
 # -----------------------------------------------------------------------------------------------------------------------------------------------
 @login_required(login_url='login')
 def create_comment(request):
+    print(request.GET.get('post_id'))
     post = get_object_or_404(Post, pk=request.GET.get('post_id', None))
     if request.method == 'POST':
         form = CreateComment(request.POST)
@@ -192,7 +193,7 @@ def create_comment(request):
             return redirect('detail_post', post_id=post.id)
     else:
         form = CreateComment()
-    return redirect('detail_post', {'form': form})
+    return redirect('detail_post', post_id=post.id)
 
 @login_required(login_url='login')
 def update_comment(request,comment_id):
