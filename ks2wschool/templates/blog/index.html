@@ -18,7 +18,7 @@
             <p>
                 <a href="{% url 'profile' post.author.nickname %}">{{ post.author }}</a>
             </p>
-            <p>{{ post.content }}</p>
+            <p>{{ post.content|safe }}</p>
         <hr>
         
     {% endfor %}
