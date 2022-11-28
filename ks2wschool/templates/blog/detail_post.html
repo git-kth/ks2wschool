@@ -43,7 +43,7 @@
             {% if comment.author == request.user %}    
                 <div class="post_button">
                     <button class="update_comment_btn" data-comment="{{comment.id}}">수정</button>
-                    <button class="delete_comment_btn">삭제</button>
+                    <button class="delete_comment_btn" data-url="{% url 'delete_comment' comment.id %}">삭제</button>
                 </div>
             {% endif %}
             
@@ -69,6 +69,11 @@
         
     });
 
+    $('.delete_comment_btn').click(function(){
+        if(confirm("정말로 삭제하시겠습니까?")){
+            location.href = this.dataset.url;
+        }
+    });
 </script>
 {% endblock %}
 
