@@ -33,12 +33,12 @@
     
 }
 .s_post_good{
-    float : left;
     height: 30px;
     border: 1px solid gray;
-    border-radius: 14px;
+    border-radius: 12px;
     background-color: #dbedfe;
-    margin: 10px 0 0 15px;
+    cursor: pointer;
+    padding: 0 10px;
 }
 .s_content_delete{
     float : right;
@@ -85,13 +85,13 @@
 
 .post-comment-content{
 text-align: left;
-margin: 30px 0 0 30px;
+margin: 15px 0 0 30px;
 }
 
 .post-comment-createdate{
 color: darkgray;
 text-align: left;
-margin: 10px 0 0 30px;
+margin: 5px 0 0 31px;
 font-size: 1.1vh;
 
 }
@@ -108,8 +108,8 @@ font-size: 1.1vh;
 
 .post_count{
     text-align: start;
-    margin: 0 0 0 30px;
-
+    margin: 5px 0 0 30px;
+    font-size: 13px;
 }
 
 .update-comment{
@@ -127,14 +127,27 @@ font-size: 1.1vh;
     display: none;
 }
 
-.update_comment_btn{
-    padding: 5px;
+.update_post_btn, .update_comment_btn{
+    padding: 6px;
     border: 1px solid rgb(206, 206, 248);
     background-color: rgb(206, 206, 248);
+    cursor: pointer;
+    border-radius: 4px;
 }
 
-.delete_comment_btn{
-    padding: 5px;
+.delete_post_btn, .delete_comment_btn{
+    padding: 6px;
     border: 1px solid rgb(232, 153, 153);
     background-color: rgb(232, 153, 153);
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+.s_post_count{
+    cursor: pointer;
+}
+
+.s_post_count:hover{
+    color: rgb(26, 26, 190);
+    text-decoration: underline;
 }

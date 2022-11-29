@@ -2,29 +2,42 @@
 {% load filter %}
 {% load static %}
 {% block content %}
-    <link rel='stylesheet' href="{% static 'detail_post.css' %}?after=1320 ">
+    <link rel='stylesheet' href="{% static 'detail_post.css' %}?after=231 ">
     <div id="post_head">
         <span class="s_post_head">{{ post.category }}</span>    
     </div>
     <hr>
     <div id="post_main">
-        <div id="post_writer"><span class="s_post_writer">👧🏻 {{ post.author }}</span></div>
+        <div id="post_writer"><span class="s_post_writer"><a href="{% url 'profile' post.author.id %}">    
+            👧🏻 {{ post.author }}</span>
+        </a>
+        </div>
         <div class="hits">
-            <span class="s_hits">조회수 : {{post.hits}}</span> </div>
+            <span class="s_hits">조회수 : {{post.hits}}</span></div>
+            <div class="post-comment-createdate" style="margin-left:10px;">
+                {{ post.create_date }}
+                {% if post.modify_date %}
+                    &nbsp;({{ post.modify_date }}에 수정됨)
+                {% endif %}
+            </div>
         <div id="post_title"><span class="s_post_title"> {{ post.title }}</></div>
         <hr/>
         <div id="content">{{ post.content|mark }}</div>
     </div>
 
-    <div id="post_good">
-        <a href="{% url 'post_vote' post.id %}">
-            <button class ="s_post_good">추천 {{post.voter.count}} 💗</button>
-            {% if post.author == request.user %}  
-                <button class="s_content_delete"> <a href="{% url 'blog_delete' post.id %}">삭제</a></button>
-                <button class="s_content_again"> <a href="{% url 'blog_update' post.id %}">수정</a></button>
-            {% endif %}
-        </a>
+    <!-- <div id="post_good">
+        <a href="{# {% url 'post_vote' post.id %} #}"></a>
+    </div> -->
+    <div style="margin:60px 0 30px 0;">
+        <button class ="s_post_good">좋아요 {{post.voter.count}} 💗</button>
     </div>
+    
+    {% if post.author == request.user %}  
+        <div>
+            <button class="update_post_btn" style="margin-right:15px" data-url="{% url 'blog_update' post.id %}">수정</button>
+            <button class="delete_post_btn" data-url="{% url 'blog_delete' post.id %}">삭제</button>
+        </div>
+    {% endif %}
     <div class="comment-list">
         {% for comment in post.comment_set.all %}
             <div id="comment{{ comment.id }}">
@@ -34,11 +47,17 @@
                 </div>
                 <form action="{% url 'update_comment' comment.id %}" method="post" class="update-comment form-{{comment.id}} hide">
                     {% csrf_token %}
-                    <textarea name="content" id="content-{{comment.id}}" class="update-comment-area" cols="30" rows="10">{{comment}}</textarea>
+                    <textarea name="content" id="content-{{comment.id}}" class="update-comment-area">{{comment}}</textarea>
                     <input class="update_comment_btn" style="margin-left:20px;" type="submit" value="수정하기">
                 </form>
                 <div class="post-comment-createdate">
                     {{ comment.create_date }}
+                    {% if comment.modify_date %}
+                        &nbsp;({{ comment.modify_date }}에 수정됨)
+                    {% endif %}
+                </div>
+                <div class="post_count">
+                    <span class="s_post_count" data-comment="{{comment.id}}">답글개수 ({{ comment.reply_set.count }})</span>
                 </div>
             {% if comment.author == request.user %}    
                 <div class="post_button">
@@ -47,9 +66,13 @@
                 </div>
             {% endif %}
             
-            <div class="post_count"><span class="s_post_count">답글개수 ({{ comment.reply_set.count }})</span></div>
         </div>
         {% endfor %}
+        <form action="{% url 'create_comment' %}?post_id={{post.id}}" method="post" class="update-comment">
+            {% csrf_token %}
+            <textarea name="content" class="update-comment-area"></textarea>
+            <input class="update_comment_btn" style="margin-left:20px;" type="submit" value="댓글쓰기">
+        </form>
     </div> 
 {% endblock %}
 
@@ -60,7 +83,6 @@
             this.innerHTML = '취소';
             $('.comment-' + this.dataset.comment).addClass('hide');
             $('.form-' + this.dataset.comment).removeClass('hide');
-            // $('.form-1')
         }else{
             this.innerHTML = '수정';
             $('.comment-' + this.dataset.comment).removeClass('hide');
@@ -74,6 +96,63 @@
             location.href = this.dataset.url;
         }
     });
+    $('.s_post_count').click(function(){
+        $('#reply-popup-layer').css('display', 'block');
+        var comment_id = this.dataset.comment;
+        $.ajax({
+            url : "{% url 'view_reply' %}",
+            type: 'get',
+            data: {'comment_id': comment_id},
+            datatype: 'json',
+            success: function(data){
+                $(".reply-list-box")[0].innerHTML = '';
+                $(".reply-comment-content")[0].innerHTML = data['comment']['content'];
+                $(".reply-comment-author")[0].innerHTML = '- ' + data['comment']['author'];
+                if(data['reply'].length > 0){
+                    $.map(data['reply'], function(reply){
+                        var node = document.createElement('div');
+                        node.className = "reply-list";
+                        var content_node = document.createElement('div');
+                        var author_node = document.createElement('span');
+                        var createdate_node = document.createElement('span');
+                        content_node.className = "reply-list-content";
+                        author_node.className = "reply-list-author";
+                        createdate_node.className = "reply-list-date";
+                        content_node.innerHTML = reply['content'];
+                        author_node.innerHTML = '- ' + reply['author'];
+                        var date = new Date(reply['create_date']);
+                        createdate_node.innerHTML =  '(' +
+                            date.getFullYear() + '년 ' + date.getMonth() + '월 ' + date.getDate() + '일 ' +
+                            (date.getHours() > 12 ? date.getHours() % 12 : date.getHours()) + ':' + date.getMinutes() + ' ' +
+                            (date.getHours() > 12 ? '오후' : '오전') + ')'
+                        node.appendChild(content_node);
+                        node.appendChild(author_node);
+                        node.appendChild(createdate_node);
+                        $(".reply-list-box")[0].appendChild(node);
+                        // $(".reply-list-box")[0].innerHTML += reply['content'];
+                        // $(".reply-list-box")[0].innerHTML += ' - ' + reply['author'] + '<br>';
+                    });
+                }else{
+                    $(".reply-list-box")[0].innerHTML += '답글이 없습니다.';
+                }
+            }
+        })
+    });
+    
+    $('.popup-exit-btn').click(function(){
+        $('#reply-popup-layer').css('display', 'none');
+    });
+
+    $('.update_post_btn').click(function(){
+        location.href = this.dataset.url;
+    });
+
+    $('.delete_post_btn').click(function(){
+        if(confirm("정말로 삭제하시겠습니까?")){
+            location.href = this.dataset.url;
+        }
+    });
+
 </script>
 {% endblock %}
 
