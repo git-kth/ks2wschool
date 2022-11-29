@@ -8,7 +8,7 @@
     </div>
     <hr>
     <div id="post_main">
-        <div id="post_writer"><span class="s_post_writer"><a href="{% url 'profile' post.author.id %}">    
+        <div id="post_writer"><span class="s_post_writer"><a href="{% url 'profile' post.author.nickname %}">    
             👧🏻 {{ post.author }}</span>
         </a>
         </div>
@@ -41,7 +41,7 @@
     <div class="comment-list">
         {% for comment in post.comment_set.all %}
             <div id="comment{{ comment.id }}">
-                <div class="post-comment-author">- {{comment.author.nickname}}</div>
+                <div class="post-comment-author">- <a href="{% url 'profile' comment.author.nickname %}">{{comment.author.nickname}}</a> </div>
                 <div class="post-comment-content comment-{{comment.id}}">
                     {{comment.content}}
                 </div>
