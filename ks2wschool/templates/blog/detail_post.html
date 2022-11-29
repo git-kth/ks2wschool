@@ -40,7 +40,7 @@
     <div class="comment-list">
         {% for comment in post.comment_set.all %}
             <div id="comment{{ comment.id }}">
-                <div class="post-comment-author">- <a href="{% url 'profile' comment.author.nickname %}">{{comment.author.nickname}}</a> </div>
+                <div class="post-comment-author">작성자 - <a href="{% url 'profile' comment.author.nickname %}">{{comment.author.nickname}}</a> </div>
                 <div class="post-comment-content comment-{{comment.id}}">
                     {{comment.content}}
                 </div>
@@ -123,12 +123,19 @@
                         author_node.innerHTML = '- ' + reply['author'];
                         var date = new Date(reply['create_date']);
                         createdate_node.innerHTML =  '(' +
-                            date.getFullYear() + '년 ' + date.getMonth() + '월 ' + date.getDate() + '일 ' +
-                            (date.getHours() > 12 ? date.getHours() % 12 : date.getHours()) + ':' + date.getMinutes() + ' ' +
-                            (date.getHours() > 12 ? '오후' : '오전') + ')';
+                        date.getFullYear() + '년 ' + date.getMonth() + '월 ' + date.getDate() + '일 ' +
+                        (date.getHours() > 12 ? date.getHours() % 12 : date.getHours()) + ':' + date.getMinutes() + ' ' +
+                        (date.getHours() > 12 ? '오후' : '오전') + ')';
                         node.appendChild(content_node);
                         node.appendChild(author_node);
                         node.appendChild(createdate_node);
+                        if(reply['author'] == '{{ request.user.nickname }}'){
+                            var div = document.createElement('div');
+                            div.dataset.url = "/delete_reply/" + reply['id'];
+                            div.className = 'delete-reply-btn'; 
+                            div.innerHTML = "삭제";
+                            node.appendChild(div);
+                        }
                         $(".reply-list-box")[0].appendChild(node);
                     });
                 }else{
@@ -160,6 +167,11 @@
                 $('.create-reply-btn').click(function(){
                     create_reply(this.dataset.comment);
                 });
+                if($('.delete-reply-btn')[0]){
+                    $('.delete-reply-btn').click(function(){
+                                    delete_reply(this);
+                    })
+                }
             }
         })
     });
@@ -196,7 +208,11 @@
         });
     }
 
-
+    function delete_reply(node){
+        if(confirm('정말로 삭제하시겠습니까?')){
+            location.href = node.dataset.url;
+        }
+    }
 </script>
 {% endblock %}
 

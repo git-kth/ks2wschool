@@ -147,6 +147,7 @@ margin: 15px 0 0 30px;
 
 .s_post_count{
     cursor: pointer;
+    letter-spacing : 2px;
 }
 
 .s_post_count:hover{
@@ -170,4 +171,19 @@ margin: 15px 0 0 30px;
     margin-top: 15px;
     border-radius: 6px;
     resize: none;
+}
+
+.delete-reply-btn{
+    text-align: center;
+    margin-left : 340px;
+    margin: 0 5px 5px 340px;
+    padding: 4px 6px;
+    font-size: 14px;
+    border-radius: 5px;;
+    text-decoration: none;
+    background-color: rgb(232, 153, 153);
+    box-shadow: 1px 1px 3px 1px gray;
+    color: black;
+    border: solid 1px black;
+    cursor: pointer;
 }
