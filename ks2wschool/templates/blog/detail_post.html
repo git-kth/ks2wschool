@@ -188,7 +188,7 @@
             dataType: 'json',
             success: function(data){
                 if(data['flag'] == true){
-                    $('.s_post_count').click();
+                    $('.s_post_count[data-comment=' + comment_id +']').click();
                 }else{
                     alert(data['error']);
                 }
