@@ -89,10 +89,10 @@ margin: 15px 0 0 30px;
 }
 
 .post-comment-createdate{
-color: darkgray;
-text-align: left;
-margin: 5px 0 0 31px;
-font-size: 1.1vh;
+    color: darkgray;
+    text-align: left;
+    margin: 5px 0 0 31px;
+    font-size: 1.1vh;
 
 }
 .post_button > *{
@@ -131,6 +131,7 @@ font-size: 1.1vh;
     padding: 6px;
     border: 1px solid rgb(206, 206, 248);
     background-color: rgb(206, 206, 248);
+    box-shadow: 1px 1px 3px 1px gray;
     cursor: pointer;
     border-radius: 4px;
 }
@@ -139,6 +140,7 @@ font-size: 1.1vh;
     padding: 6px;
     border: 1px solid rgb(232, 153, 153);
     background-color: rgb(232, 153, 153);
+    box-shadow: 1px 1px 3px 1px gray;
     cursor: pointer;
     border-radius: 4px;
 }
@@ -150,4 +152,22 @@ font-size: 1.1vh;
 .s_post_count:hover{
     color: rgb(26, 26, 190);
     text-decoration: underline;
+}
+
+.create-reply-btn{
+    padding: 5px;
+    margin: 7px 0 0 2px;
+    background-color:rgb(206, 206, 248);
+    border: 1px solid rgb(206, 206, 248);
+    box-shadow: 1px 1px 3px 1px gray;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.craete-reply-area{
+    width: 99%;
+    height: 55px;
+    margin-top: 15px;
+    border-radius: 6px;
+    resize: none;
 }

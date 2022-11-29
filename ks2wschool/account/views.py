@@ -29,8 +29,9 @@ def login(request):
             if user.is_authenticated:  
                 if user.is_active:
                     auth.login(request, user)
-                    if request.POST.get('next'):
-                        return redirect(request.POST['next'])
+                    if next is not None:
+                        print(next)
+                        return redirect(next)
                     else:
                         return redirect('index')
                 else:

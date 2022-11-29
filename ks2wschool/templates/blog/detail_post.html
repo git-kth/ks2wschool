@@ -2,15 +2,14 @@
 {% load filter %}
 {% load static %}
 {% block content %}
-    <link rel='stylesheet' href="{% static 'detail_post.css' %}?after=231 ">
+    <link rel='stylesheet' href="{% static 'detail_post.css' %}?after=211 ">
     <div id="post_head">
         <span class="s_post_head">{{ post.category }}</span>    
     </div>
     <hr>
     <div id="post_main">
-        <div id="post_writer"><span class="s_post_writer"><a href="{% url 'profile' post.author.nickname %}">    
-            👧🏻 {{ post.author }}</span>
-        </a>
+        <div id="post_writer"><span class="s_post_writer">
+            👧🏻<a href="{% url 'profile' post.author.nickname %}">{{ post.author }}</a></span>
         </div>
         <div class="hits">
             <span class="s_hits">조회수 : {{post.hits}}</span></div>
@@ -108,9 +107,11 @@
                 $(".reply-list-box")[0].innerHTML = '';
                 $(".reply-comment-content")[0].innerHTML = data['comment']['content'];
                 $(".reply-comment-author")[0].innerHTML = '- ' + data['comment']['author'];
+                $(".reply-list-box")[0].innerHTML = '';
+                var node;
                 if(data['reply'].length > 0){
                     $.map(data['reply'], function(reply){
-                        var node = document.createElement('div');
+                        node = document.createElement('div');
                         node.className = "reply-list";
                         var content_node = document.createElement('div');
                         var author_node = document.createElement('span');
@@ -124,17 +125,41 @@
                         createdate_node.innerHTML =  '(' +
                             date.getFullYear() + '년 ' + date.getMonth() + '월 ' + date.getDate() + '일 ' +
                             (date.getHours() > 12 ? date.getHours() % 12 : date.getHours()) + ':' + date.getMinutes() + ' ' +
-                            (date.getHours() > 12 ? '오후' : '오전') + ')'
+                            (date.getHours() > 12 ? '오후' : '오전') + ')';
                         node.appendChild(content_node);
                         node.appendChild(author_node);
                         node.appendChild(createdate_node);
                         $(".reply-list-box")[0].appendChild(node);
-                        // $(".reply-list-box")[0].innerHTML += reply['content'];
-                        // $(".reply-list-box")[0].innerHTML += ' - ' + reply['author'] + '<br>';
                     });
                 }else{
-                    $(".reply-list-box")[0].innerHTML += '답글이 없습니다.';
+                    node = document.createElement('div');
+                    node.className = "reply-list";
+                    var content_node = document.createElement('div');
+                    content_node.className = "reply-list-content";
+                    content_node.innerHTML = '답글이 없습니다.';
+                    node.appendChild(content_node);
+                    $(".reply-list-box")[0].appendChild(node);
                 }
+                if($('.popup-content .create-reply-form')[0]){
+                    var x = $('.popup-content .create-reply-form')[0];
+                    $('.popup-content')[1].removeChild(x);
+                }
+                var form = document.createElement('div');
+                form.className = 'create-reply-form';
+                var textarea = document.createElement('textarea');
+                var button = document.createElement('button');
+                button.innerHTML = "답글 쓰기";
+                button.className = "create-reply-btn";
+                button.dataset.comment = comment_id;
+                textarea.className = "craete-reply-area";
+                // form.method = 'post';
+                // form.action = '{% url "create_reply" %}?comment_id=' + comment_id;
+                form.appendChild(textarea);
+                form.appendChild(button);
+                $('.popup-content')[1].appendChild(form);
+                $('.create-reply-btn').click(function(){
+                    create_reply(this.dataset.comment);
+                });
             }
         })
     });
@@ -146,12 +171,31 @@
     $('.update_post_btn').click(function(){
         location.href = this.dataset.url;
     });
-
+    
     $('.delete_post_btn').click(function(){
         if(confirm("정말로 삭제하시겠습니까?")){
             location.href = this.dataset.url;
         }
     });
+
+
+
+    function create_reply(comment_id){
+        $.ajax({
+            url: "{% url 'create_reply' %}?comment_id=" + comment_id,
+            type: 'post',
+            data: {'content': $('.craete-reply-area')[0].value },
+            dataType: 'json',
+            success: function(data){
+                if(data['flag'] == true){
+                    $('.s_post_count').click();
+                }else{
+                    alert(data['error']);
+                }
+            }
+        });
+    }
+
 
 </script>
 {% endblock %}

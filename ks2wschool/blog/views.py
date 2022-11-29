@@ -234,21 +234,39 @@ def delete_comment(request,comment_id):
 
 #reply
 # ---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+# @login_required(login_url='login')
+# def create_reply(request):
+#     comment = get_object_or_404(Comment, pk=request.GET.get('comment_id', None))
+#     if request.method == "POST":
+#         form = CreateReply(request.POST)
+#         if form.is_valid():
+#             reply = form.save(commit=False)
+#             reply.comment = comment
+#             reply.author = request.user
+#             reply.save()
+#             return redirect('detail_post', post_id=comment.post.id)
+#     else:
+#         form = CreateReply()
+#     context = {'form':form}
+#     return redirect('detail_post',context)
+
 @login_required(login_url='login')
 def create_reply(request):
-    comment = get_object_or_404(Comment, pk=request.GET.get('comment_id', None))
-    if request.method == "POST":
+    comment = get_object_or_404(Comment, pk=request.GET.get('comment_id'))
+    if request.method == 'POST':
         form = CreateReply(request.POST)
         if form.is_valid():
             reply = form.save(commit=False)
-            reply.comment = comment
             reply.author = request.user
+            reply.comment = comment
             reply.save()
-            return redirect('detail_post', post_id=comment.post.id)
+            return JsonResponse({"flag": True})
+        else:
+            err = {"error": "입려값이 없습니다."}
     else:
-        form = CreateReply()
-    context = {'form':form}
-    return redirect('detail_post',context)
+        err = {"error": "잘못된 접근 방식입니다."}
+    err.update({"flag": False})
+    return JsonResponse(err)
 
 @login_required(login_url='login')
 def delete_reply(request,reply_id):
