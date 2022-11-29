@@ -85,13 +85,13 @@
 
 .post-comment-content{
 text-align: left;
-margin: 30px 0 0 30px;
+margin: 15px 0 0 30px;
 }
 
 .post-comment-createdate{
 color: darkgray;
 text-align: left;
-margin: 10px 0 0 30px;
+margin: 5px 0 0 31px;
 font-size: 1.1vh;
 
 }
@@ -108,8 +108,8 @@ font-size: 1.1vh;
 
 .post_count{
     text-align: start;
-    margin: 0 0 0 30px;
-
+    margin: 5px 0 0 30px;
+    font-size: 13px;
 }
 
 .update-comment{
@@ -149,4 +149,5 @@ font-size: 1.1vh;
 
 .s_post_count:hover{
     color: rgb(26, 26, 190);
+    text-decoration: underline;
 }

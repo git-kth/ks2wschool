@@ -236,11 +236,6 @@ body {
     overflow: auto;
 }
 
-.popup-content{
-
-}
-
-
 .category-input{
     width: 300px;
     height: 25px;
@@ -273,4 +268,29 @@ body {
     font-size: 15px;
     text-align: right;
     margin: 0 15px 0 0;
+}
+
+
+.reply-list{
+    border: 1px solid black;
+    padding: 10px 0 2px 0;
+    margin: 17px 0 0 0;
+}
+.reply-list-box > *{
+    border-radius: 8px;
+}
+.reply-list-content{
+    margin: 0 0 10px 5px;
+    padding: 10px 0;
+}
+
+.reply-list-author{
+    display: inline-block;
+    font-size: 13px;
+    margin: 10px 5px 5px 10px;
+}
+
+.reply-list-date{
+    color: rgb(121, 116, 116);
+    font-size: 11px;
 }

@@ -2,13 +2,16 @@
 {% load filter %}
 {% load static %}
 {% block content %}
-    <link rel='stylesheet' href="{% static 'detail_post.css' %}?after=113 ">
+    <link rel='stylesheet' href="{% static 'detail_post.css' %}?after=231 ">
     <div id="post_head">
         <span class="s_post_head">{{ post.category }}</span>    
     </div>
     <hr>
     <div id="post_main">
-        <div id="post_writer"><span class="s_post_writer">👧🏻 {{ post.author }}</span></div>
+        <div id="post_writer"><span class="s_post_writer"><a href="{% url 'profile' post.author.id %}">    
+            👧🏻 {{ post.author }}</span>
+        </a>
+        </div>
         <div class="hits">
             <span class="s_hits">조회수 : {{post.hits}}</span></div>
             <div class="post-comment-createdate" style="margin-left:10px;">
@@ -53,6 +56,9 @@
                         &nbsp;({{ comment.modify_date }}에 수정됨)
                     {% endif %}
                 </div>
+                <div class="post_count">
+                    <span class="s_post_count" data-comment="{{comment.id}}">답글개수 ({{ comment.reply_set.count }})</span>
+                </div>
             {% if comment.author == request.user %}    
                 <div class="post_button">
                     <button class="update_comment_btn" data-comment="{{comment.id}}">수정</button>
@@ -60,9 +66,6 @@
                 </div>
             {% endif %}
             
-            <div class="post_count">
-                <span class="s_post_count" data-comment="{{comment.id}}">답글개수 ({{ comment.reply_set.count }})</span>
-            </div>
         </div>
         {% endfor %}
         <form action="{% url 'create_comment' %}?post_id={{post.id}}" method="post" class="update-comment">
@@ -80,7 +83,6 @@
             this.innerHTML = '취소';
             $('.comment-' + this.dataset.comment).addClass('hide');
             $('.form-' + this.dataset.comment).removeClass('hide');
-            // $('.form-1')
         }else{
             this.innerHTML = '수정';
             $('.comment-' + this.dataset.comment).removeClass('hide');
@@ -108,8 +110,27 @@
                 $(".reply-comment-author")[0].innerHTML = '- ' + data['comment']['author'];
                 if(data['reply'].length > 0){
                     $.map(data['reply'], function(reply){
-                        $(".reply-list-box")[0].innerHTML += reply['content'];
-                        $(".reply-list-box")[0].innerHTML += ' - ' + reply['author'] + '<br>';
+                        var node = document.createElement('div');
+                        node.className = "reply-list";
+                        var content_node = document.createElement('div');
+                        var author_node = document.createElement('span');
+                        var createdate_node = document.createElement('span');
+                        content_node.className = "reply-list-content";
+                        author_node.className = "reply-list-author";
+                        createdate_node.className = "reply-list-date";
+                        content_node.innerHTML = reply['content'];
+                        author_node.innerHTML = '- ' + reply['author'];
+                        var date = new Date(reply['create_date']);
+                        createdate_node.innerHTML =  '(' +
+                            date.getFullYear() + '년 ' + date.getMonth() + '월 ' + date.getDate() + '일 ' +
+                            (date.getHours() > 12 ? date.getHours() % 12 : date.getHours()) + ':' + date.getMinutes() + ' ' +
+                            (date.getHours() > 12 ? '오후' : '오전') + ')'
+                        node.appendChild(content_node);
+                        node.appendChild(author_node);
+                        node.appendChild(createdate_node);
+                        $(".reply-list-box")[0].appendChild(node);
+                        // $(".reply-list-box")[0].innerHTML += reply['content'];
+                        // $(".reply-list-box")[0].innerHTML += ' - ' + reply['author'] + '<br>';
                     });
                 }else{
                     $(".reply-list-box")[0].innerHTML += '답글이 없습니다.';
