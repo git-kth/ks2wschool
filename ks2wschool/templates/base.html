@@ -187,6 +187,10 @@
             $('#popup-layer')[0].style.display = 'none';
         });
 
+        $('#reply-popup-layer').click(function(){
+            $('#popup-layer')[0].style.display = 'none';
+        });
+
         function create_category(node){
             var name = $('.category-input')[0].value;
             $.ajax({
